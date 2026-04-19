@@ -11,7 +11,7 @@ Thanks for your interest. Tripwire is a governance library — correctness and a
 ## Development setup
 
 ```bash
-git clone https://github.com/firekicks/tripwire-ai
+git clone https://github.com/tripwire-ai/tripwire-ai
 cd tripwire-ai
 python3 -m venv .venv && source .venv/bin/activate
 pip install -e ".[api,test]"

@@ -45,8 +45,8 @@ dev  = ["tripwire-ai[api,test]"]
 tripwire = "tripwire_ai.cli:main"
 
 [project.urls]
-Homepage = "https://github.com/firekicks/tripwire-ai"
-Issues   = "https://github.com/firekicks/tripwire-ai/issues"
+Homepage = "https://github.com/tripwire-ai/tripwire-ai"
+Issues   = "https://github.com/tripwire-ai/tripwire-ai/issues"
 
 [tool.setuptools.packages.find]
 where = ["src"]
