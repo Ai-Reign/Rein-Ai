@@ -1,4 +1,4 @@
-"""Auth + RBAC tests for the Tripwire admin API.
+"""Auth + RBAC tests for the Rein admin API.
 
 Covers:
 - Open mode (no env vars) → backwards compat, all endpoints allowed
@@ -18,15 +18,15 @@ import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
-from tripwire_ai import Tripwire, TripwireConfig
-from tripwire_ai.api import build_router
-from tripwire_ai.auth import CERT_ROLES_ENV, CERT_SUBJECT_HEADER, TOKEN_ENV
+from rein_ai import Rein, ReinConfig
+from rein_ai.api import build_router
+from rein_ai.auth import CERT_ROLES_ENV, CERT_SUBJECT_HEADER, TOKEN_ENV
 
 
 @pytest.fixture
 async def brain(tmp_path: Path):
-    cfg = TripwireConfig(enabled=True, shadow_mode=False, debounce_seconds=0.0)
-    b = Tripwire(cfg=cfg, persist_dir=tmp_path)
+    cfg = ReinConfig(enabled=True, shadow_mode=False, debounce_seconds=0.0)
+    b = Rein(cfg=cfg, persist_dir=tmp_path)
     await b.start()
     yield b
     await b.shutdown()
@@ -44,16 +44,16 @@ async def test_open_mode_allows_all_endpoints(brain, monkeypatch):
     monkeypatch.delenv(TOKEN_ENV, raising=False)
     monkeypatch.delenv(CERT_ROLES_ENV, raising=False)
     c = _app(brain)
-    assert c.get("/tripwire/state").status_code == 200
-    assert c.post("/tripwire/halt", json={"reason": "test"}).status_code == 200
-    assert c.post("/tripwire/resume", json={}).status_code == 200
+    assert c.get("/rein/state").status_code == 200
+    assert c.post("/rein/halt", json={"reason": "test"}).status_code == 200
+    assert c.post("/rein/resume", json={}).status_code == 200
 
 
 async def test_open_mode_whoami_reports_open(brain, monkeypatch):
     monkeypatch.delenv(TOKEN_ENV, raising=False)
     monkeypatch.delenv(CERT_ROLES_ENV, raising=False)
     c = _app(brain)
-    r = c.get("/tripwire/whoami")
+    r = c.get("/rein/whoami")
     assert r.status_code == 200
     assert r.json()["auth_method"] == "open"
 
@@ -67,11 +67,11 @@ async def test_bearer_reader_can_read_cant_mutate(brain, monkeypatch):
     }))
     c = _app(brain)
 
-    r = c.get("/tripwire/state",
+    r = c.get("/rein/state",
               headers={"Authorization": "Bearer tok_reader_xxx"})
     assert r.status_code == 200
 
-    r = c.post("/tripwire/halt", json={"reason": "test"},
+    r = c.post("/rein/halt", json={"reason": "test"},
                headers={"Authorization": "Bearer tok_reader_xxx"})
     assert r.status_code == 403
 
@@ -81,7 +81,7 @@ async def test_bearer_operator_can_mutate(brain, monkeypatch):
         "tok_op_xxx": ["operator"],
     }))
     c = _app(brain)
-    r = c.post("/tripwire/halt", json={"reason": "drill"},
+    r = c.post("/rein/halt", json={"reason": "drill"},
                headers={"Authorization": "Bearer tok_op_xxx"})
     assert r.status_code == 200
     assert r.json()["halted"] is True
@@ -92,22 +92,22 @@ async def test_bearer_operator_can_mutate(brain, monkeypatch):
 async def test_bearer_admin_inherits_all_roles(brain, monkeypatch):
     monkeypatch.setenv(TOKEN_ENV, json.dumps({"tok_admin": ["admin"]}))
     c = _app(brain)
-    assert c.get("/tripwire/state",
+    assert c.get("/rein/state",
                  headers={"Authorization": "Bearer tok_admin"}).status_code == 200
-    assert c.post("/tripwire/halt", json={"reason": "t"},
+    assert c.post("/rein/halt", json={"reason": "t"},
                   headers={"Authorization": "Bearer tok_admin"}).status_code == 200
 
 
 async def test_missing_bearer_returns_401(brain, monkeypatch):
     monkeypatch.setenv(TOKEN_ENV, json.dumps({"tok": ["reader"]}))
     c = _app(brain)
-    assert c.get("/tripwire/state").status_code == 401
+    assert c.get("/rein/state").status_code == 401
 
 
 async def test_bogus_bearer_returns_401(brain, monkeypatch):
     monkeypatch.setenv(TOKEN_ENV, json.dumps({"tok_good": ["reader"]}))
     c = _app(brain)
-    r = c.get("/tripwire/state",
+    r = c.get("/rein/state",
               headers={"Authorization": "Bearer tok_NOT_REAL"})
     assert r.status_code == 401
 
@@ -115,7 +115,7 @@ async def test_bogus_bearer_returns_401(brain, monkeypatch):
 async def test_whoami_never_leaks_raw_token(brain, monkeypatch):
     monkeypatch.setenv(TOKEN_ENV, json.dumps({"tok_secret_12345": ["operator"]}))
     c = _app(brain)
-    r = c.get("/tripwire/whoami",
+    r = c.get("/rein/whoami",
               headers={"Authorization": "Bearer tok_secret_12345"})
     assert r.status_code == 200
     body = r.json()
@@ -130,7 +130,7 @@ async def test_mtls_subject_header_grants_role(brain, monkeypatch):
         "CN=ops-bot,O=acme": ["operator"],
     }))
     c = _app(brain)
-    r = c.post("/tripwire/halt", json={"reason": "drill"},
+    r = c.post("/rein/halt", json={"reason": "drill"},
                headers={CERT_SUBJECT_HEADER: "CN=ops-bot,O=acme"})
     assert r.status_code == 200
     assert "cert:CN=ops-bot,O=acme" in r.json()["by"]
@@ -141,7 +141,7 @@ async def test_unknown_cert_subject_returns_401(brain, monkeypatch):
         "CN=known,O=acme": ["reader"],
     }))
     c = _app(brain)
-    r = c.get("/tripwire/state",
+    r = c.get("/rein/state",
               headers={CERT_SUBJECT_HEADER: "CN=stranger,O=evil"})
     assert r.status_code == 401
 
@@ -155,12 +155,12 @@ async def test_bearer_takes_precedence_over_mtls(brain, monkeypatch):
     }))
     c = _app(brain)
     # Client sends BOTH — bearer should win and grant admin role
-    r = c.post("/tripwire/halt", json={"reason": "t"},
+    r = c.post("/rein/halt", json={"reason": "t"},
                headers={"Authorization": "Bearer tok_admin",
                         CERT_SUBJECT_HEADER: "CN=readonly,O=acme"})
     assert r.status_code == 200
     # whoami confirms bearer
-    r = c.get("/tripwire/whoami",
+    r = c.get("/rein/whoami",
               headers={"Authorization": "Bearer tok_admin",
                        CERT_SUBJECT_HEADER: "CN=readonly,O=acme"})
     assert r.json()["auth_method"] == "bearer"

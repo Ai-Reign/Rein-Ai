@@ -8,16 +8,16 @@ from unittest.mock import patch
 
 import pytest
 
-from tripwire_ai import Tripwire, TripwireConfig
-from tripwire_ai.types import Status
+from rein_ai import Rein, ReinConfig
+from rein_ai.types import Status
 
 
 @pytest.fixture
 async def brain(tmp_path: Path):
-    cfg = TripwireConfig(enabled=True, shadow_mode=False,
+    cfg = ReinConfig(enabled=True, shadow_mode=False,
                      min_samples_for_kill=10, min_samples_for_green=20,
                      exec_min_attempts=10, debounce_seconds=0.0)
-    b = Tripwire(cfg=cfg, persist_dir=tmp_path)
+    b = Rein(cfg=cfg, persist_dir=tmp_path)
     await b.start()
     yield b
     await b.shutdown()
@@ -48,12 +48,12 @@ async def test_fresh_brain_kills_after_enough_evidence(brain):
 
 async def test_persisted_state_demoted_to_yellow_on_stale_restart(tmp_path: Path):
     """Safe mode: stale state (>10min old) → all GREEN become YELLOW on load."""
-    cfg = TripwireConfig(enabled=True, shadow_mode=False, debounce_seconds=0.0,
+    cfg = ReinConfig(enabled=True, shadow_mode=False, debounce_seconds=0.0,
                      min_samples_for_kill=3, min_samples_for_green=3,
                      exec_min_attempts=3)
 
     # Run 1: make a strategy GREEN and persist
-    b1 = Tripwire(cfg=cfg, persist_dir=tmp_path)
+    b1 = Rein(cfg=cfg, persist_dir=tmp_path)
     await b1.start()
     for i in range(10):
         await b1.record_fill(source="a", series="s", ticker=f"t{i}",
@@ -63,13 +63,13 @@ async def test_persisted_state_demoted_to_yellow_on_stale_restart(tmp_path: Path
     await b1.shutdown()
 
     # Backdate the state file to simulate 30-minute-old restart
-    state_file = tmp_path / "tripwire_state.json"
+    state_file = tmp_path / "rein_state.json"
     old_time = time.time() - 30 * 60
     import os
     os.utime(state_file, (old_time, old_time))
 
     # Run 2: fresh brain from stale state → should demote GREEN → YELLOW
-    b2 = Tripwire(cfg=cfg, persist_dir=tmp_path)
+    b2 = Rein(cfg=cfg, persist_dir=tmp_path)
     sh = b2._state.health.get(("a", "s"))
     assert sh is not None
     assert sh.status == Status.YELLOW, f"stale state not demoted (got {sh.status.value})"
@@ -121,8 +121,8 @@ async def test_clock_large_forward_jump(brain):
 
 async def test_gate_fast_path_microseconds():
     """gate() shouldn't do I/O — should be microseconds even with many strategies."""
-    cfg = TripwireConfig(enabled=True, shadow_mode=False, debounce_seconds=0.0)
-    b = Tripwire(cfg=cfg)
+    cfg = ReinConfig(enabled=True, shadow_mode=False, debounce_seconds=0.0)
+    b = Rein(cfg=cfg)
     await b.start()
     try:
         # Register 1000 strategies

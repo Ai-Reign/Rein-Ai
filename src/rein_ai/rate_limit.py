@@ -10,7 +10,7 @@ than thread safety (we're OK with a couple of extra calls slipping through
 during a race; the enforcement is statistical).
 
 Disabled by default (gate_rps_per_key=0 means "no limit"). Enable via
-TripwireConfig or env vars.
+ReinConfig or env vars.
 
 Design:
     A token bucket has `capacity` tokens and refills at `rate` per second.

@@ -1,9 +1,9 @@
-"""Mini live dashboard. Tails tripwire_audit.jsonl + renders current state.
+"""Mini live dashboard. Tails rein_audit.jsonl + renders current state.
 
 Zero frontend build — single HTML page polls a small JSON endpoint.
 
 Usage:
-    python3 -m tripwire_ai.dashboard --persist-dir ./tripwire_state --port 8765
+    python3 -m rein_ai.dashboard --persist-dir ./rein_state --port 8765
     open http://localhost:8765
 """
 from __future__ import annotations
@@ -14,10 +14,10 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 from pathlib import Path
 from typing import List, Optional
 
-from tripwire_ai.persist import load_recent_audit, load_state
+from rein_ai.persist import load_recent_audit, load_state
 
 
-HTML = """<!doctype html><html><head><meta charset=utf-8><title>Tripwire</title>
+HTML = """<!doctype html><html><head><meta charset=utf-8><title>Rein</title>
 <style>
 body{font-family:ui-monospace,Menlo,monospace;background:#0B1020;color:#E6E8EF;margin:0;padding:24px}
 h1{color:#00E5A8;font-size:22px;margin:0 0 18px;font-weight:700}
@@ -38,7 +38,7 @@ th{color:#8A93A6;font-weight:500;text-transform:uppercase;letter-spacing:0.5px;f
 .kpi .n{font-size:28px;font-weight:700;color:#00E5A8}
 .kpi .l{font-size:10.5px;color:#8A93A6;text-transform:uppercase;letter-spacing:1px}
 </style></head><body>
-<h1>🧠 Tripwire — Live Governance</h1>
+<h1>🧠 Rein — Live Governance</h1>
 <div id=root>loading…</div>
 <script>
 const COLORS={green:"green",yellow:"yellow",red:"red",black:"black"};
@@ -73,8 +73,8 @@ tick(); setInterval(tick, 2000);
 
 
 def build_state(persist_dir: Path) -> dict:
-    state = load_state(persist_dir / "tripwire_state.json")
-    events = load_recent_audit(persist_dir / "tripwire_audit.jsonl", n=200)
+    state = load_state(persist_dir / "rein_state.json")
+    events = load_recent_audit(persist_dir / "rein_audit.jsonl", n=200)
 
     health_rows = []
     totals = {"green": 0, "yellow": 0, "red": 0, "black": 0}
@@ -134,7 +134,7 @@ def make_handler(persist_dir: Path):
 
 def serve(persist_dir: Path, port: int = 8765):
     srv = HTTPServer(("127.0.0.1", port), make_handler(persist_dir))
-    print(f"Tripwire dashboard: http://127.0.0.1:{port}")
+    print(f"Rein dashboard: http://127.0.0.1:{port}")
     print(f"Watching: {persist_dir}")
     try:
         srv.serve_forever()
@@ -144,7 +144,7 @@ def serve(persist_dir: Path, port: int = 8765):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--persist-dir", default="tripwire_state")
+    ap.add_argument("--persist-dir", default="rein_state")
     ap.add_argument("--port", type=int, default=8765)
     args = ap.parse_args()
     serve(Path(args.persist_dir), args.port)

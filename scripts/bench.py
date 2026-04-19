@@ -1,4 +1,4 @@
-"""Micro-benchmark: measure Tripwire.gate() latency.
+"""Micro-benchmark: measure Rein.gate() latency.
 
 Run:
     python3 scripts/bench.py
@@ -7,11 +7,11 @@ import asyncio
 import statistics
 import time
 
-from tripwire_ai import Tripwire, TripwireConfig
+from rein_ai import Rein, ReinConfig
 
 
 async def main() -> None:
-    brain = Tripwire(cfg=TripwireConfig.from_env())
+    brain = Rein(cfg=ReinConfig.from_env())
     await brain.start()
     try:
         # Warmup

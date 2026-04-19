@@ -1,8 +1,8 @@
 """Natural-language policy compiler.
 
 Converts English policy descriptions into a structured `CompiledPolicy` —
-a bundle of TripwireConfig overrides, rate-limit settings, anomaly thresholds,
-and named custom predicates that callers can mount on a Tripwire.
+a bundle of ReinConfig overrides, rate-limit settings, anomaly thresholds,
+and named custom predicates that callers can mount on a Rein.
 
 Two paths:
   1. **Rule-based parser** (always available, zero deps): regex patterns
@@ -13,11 +13,11 @@ Two paths:
      constrained to emit the same JSON schema. Validated before use.
 
 Design intent: an operator can write 'block any caller exceeding 10 calls
-per second' in their config file, and Tripwire produces an enforceable
+per second' in their config file, and Rein produces an enforceable
 policy without anyone touching Python.
 
 Usage:
-    from tripwire_ai.policy_compiler import compile_policy
+    from rein_ai.policy_compiler import compile_policy
 
     policy = compile_policy([
         "Cap each caller at 5 requests per second with bursts of 10",
@@ -35,9 +35,9 @@ from dataclasses import dataclass, field, replace
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional, Tuple
 
-from tripwire_ai.anomaly import AnomalyDetector
-from tripwire_ai.config import TripwireConfig
-from tripwire_ai.rate_limit import TokenBucketLimiter
+from rein_ai.anomaly import AnomalyDetector
+from rein_ai.config import ReinConfig
+from rein_ai.rate_limit import TokenBucketLimiter
 
 
 _NUM = r"(\d+(?:\.\d+)?)"
@@ -53,15 +53,15 @@ class PolicyRule:
 
 @dataclass
 class CompiledPolicy:
-    config: TripwireConfig
+    config: ReinConfig
     rate_limiter: Optional[TokenBucketLimiter]
     anomaly_detector: Optional[AnomalyDetector]
     rules: List[PolicyRule]
     unparsed: List[str]
 
     def build_brain(self, persist_dir: Optional[Path] = None):
-        from tripwire_ai.brain import Tripwire
-        return Tripwire(
+        from rein_ai.brain import Rein
+        return Rein(
             cfg=self.config,
             persist_dir=persist_dir,
             rate_limiter=self.rate_limiter,
@@ -171,7 +171,7 @@ def _llm_parse(text: str, model: str = "claude-haiku-4-5-20251001") -> Optional[
         "rate_per_key|burst_per_key|global_rate": "TokenBucketLimiter knobs (calls/sec, bucket size)",
         "portfolio_floor_pct|portfolio_nuclear_pct": "negative float, eg -0.05 for 5% loss",
         "balance_floor_usd": "absolute USD",
-        "debounce_seconds|decay_hours": "TripwireConfig timing knobs",
+        "debounce_seconds|decay_hours": "ReinConfig timing knobs",
         "min_samples_for_kill|min_samples_for_green": "cold-start sample counts",
         "deny_storm_rate|runaway_multiplier|new_caller_threshold|window_s": "AnomalyDetector knobs",
     }
@@ -202,7 +202,7 @@ def _llm_parse(text: str, model: str = "claude-haiku-4-5-20251001") -> Optional[
 
 def compile_policy(
     descriptions: List[str],
-    base: Optional[TripwireConfig] = None,
+    base: Optional[ReinConfig] = None,
     use_llm_fallback: bool = True,
 ) -> CompiledPolicy:
     """Compile a list of English policy descriptions to a CompiledPolicy."""
@@ -227,7 +227,7 @@ def compile_policy(
         else:
             cfg_kwargs.update(rule.params)
 
-    cfg = base or TripwireConfig.from_env()
+    cfg = base or ReinConfig.from_env()
     if cfg_kwargs:
         cfg = replace(cfg, **{k: v for k, v in cfg_kwargs.items() if hasattr(cfg, k)})
 

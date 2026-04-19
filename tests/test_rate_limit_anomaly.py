@@ -15,10 +15,10 @@ from pathlib import Path
 
 import pytest
 
-from tripwire_ai import Tripwire, TripwireConfig
-from tripwire_ai.types import Status
-from tripwire_ai.anomaly import AnomalyAlert, AnomalyDetector
-from tripwire_ai.rate_limit import TokenBucketLimiter
+from rein_ai import Rein, ReinConfig
+from rein_ai.types import Status
+from rein_ai.anomaly import AnomalyAlert, AnomalyDetector
+from rein_ai.rate_limit import TokenBucketLimiter
 
 
 # ---------- TokenBucketLimiter ----------
@@ -79,9 +79,9 @@ def test_limiter_inspect_reports_state():
 
 @pytest.fixture
 async def brain_rate_limited(tmp_path: Path):
-    cfg = TripwireConfig(enabled=True, shadow_mode=False, debounce_seconds=0.0)
+    cfg = ReinConfig(enabled=True, shadow_mode=False, debounce_seconds=0.0)
     lim = TokenBucketLimiter(rate_per_key=5.0, burst_per_key=3.0)
-    b = Tripwire(cfg=cfg, persist_dir=tmp_path, rate_limiter=lim)
+    b = Rein(cfg=cfg, persist_dir=tmp_path, rate_limiter=lim)
     await b.start()
     yield b
     await b.shutdown()
@@ -101,9 +101,9 @@ async def test_gate_respects_rate_limit(brain_rate_limited):
 
 async def test_rate_limit_works_even_in_shadow_mode(tmp_path: Path):
     """Rate limit is a resource-safety feature — active even in shadow mode."""
-    cfg = TripwireConfig(enabled=True, shadow_mode=True, debounce_seconds=0.0)
+    cfg = ReinConfig(enabled=True, shadow_mode=True, debounce_seconds=0.0)
     lim = TokenBucketLimiter(rate_per_key=10.0, burst_per_key=2.0)
-    brain = Tripwire(cfg=cfg, persist_dir=tmp_path, rate_limiter=lim)
+    brain = Rein(cfg=cfg, persist_dir=tmp_path, rate_limiter=lim)
     await brain.start()
     try:
         # Burn through burst
@@ -184,10 +184,10 @@ def test_anomaly_cooldown_prevents_alert_spam():
 # ---------- Full integration ----------
 
 async def test_gate_stays_fast_with_limiter_and_anomaly(tmp_path: Path):
-    cfg = TripwireConfig(enabled=True, shadow_mode=False, debounce_seconds=0.0)
+    cfg = ReinConfig(enabled=True, shadow_mode=False, debounce_seconds=0.0)
     lim = TokenBucketLimiter(rate_per_key=1_000_000, burst_per_key=1_000_000)
     det = AnomalyDetector()
-    brain = Tripwire(cfg=cfg, persist_dir=tmp_path,
+    brain = Rein(cfg=cfg, persist_dir=tmp_path,
                        rate_limiter=lim, anomaly_detector=det)
     await brain.start()
     try:
@@ -209,12 +209,12 @@ async def test_gate_stays_fast_with_limiter_and_anomaly(tmp_path: Path):
 
 async def test_anomaly_fires_on_real_gate_flood(tmp_path: Path):
     alerts = []
-    cfg = TripwireConfig(enabled=True, shadow_mode=False, debounce_seconds=0.0)
+    cfg = ReinConfig(enabled=True, shadow_mode=False, debounce_seconds=0.0)
     det = AnomalyDetector(
         new_caller_threshold=5, alert_cooldown_s=0.0,
         on_alert=lambda a: alerts.append(a),
     )
-    brain = Tripwire(cfg=cfg, persist_dir=tmp_path, anomaly_detector=det)
+    brain = Rein(cfg=cfg, persist_dir=tmp_path, anomaly_detector=det)
     await brain.start()
     try:
         for i in range(10):

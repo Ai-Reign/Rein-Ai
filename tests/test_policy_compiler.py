@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import pytest
 
-from tripwire_ai.policy_compiler import compile_policy
+from rein_ai.policy_compiler import compile_policy
 
 
 def test_rate_per_key_with_burst():
@@ -83,7 +83,7 @@ def test_explain_returns_human_readable():
     assert "Cap each caller" in out
 
 
-def test_build_brain_returns_tripwire(tmp_path):
+def test_build_brain_returns_rein(tmp_path):
     p = compile_policy([
         "Cap each caller at 5 requests per second",
         "Halt the portfolio when losses exceed 5 percent",

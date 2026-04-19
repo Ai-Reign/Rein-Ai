@@ -1,6 +1,6 @@
-# Contributing to Tripwire
+# Contributing to Rein
 
-Thanks for your interest. Tripwire is a governance library — correctness and auditability matter. Contributions that improve safety, expand integrations, or strengthen the red-team library are especially welcome.
+Thanks for your interest. Rein is a governance library — correctness and auditability matter. Contributions that improve safety, expand integrations, or strengthen the red-team library are especially welcome.
 
 ## Before you start
 
@@ -11,8 +11,8 @@ Thanks for your interest. Tripwire is a governance library — correctness and a
 ## Development setup
 
 ```bash
-git clone https://github.com/tripwire-ai/tripwire-ai
-cd tripwire-ai
+git clone https://github.com/rein-ai/rein-ai
+cd rein-ai
 python3 -m venv .venv && source .venv/bin/activate
 pip install -e ".[api,test]"
 pytest
@@ -30,9 +30,9 @@ You should see **130 passing tests**.
 
 ## Adding a red-team attack
 
-The high-leverage contribution path. Each attack is a subclass in `src/tripwire_ai/adversary.py`:
+The high-leverage contribution path. Each attack is a subclass in `src/rein_ai/adversary.py`:
 
-1. Implement your attack as an `async` callable that takes a `Tripwire` brain and returns a `ScenarioResult`.
+1. Implement your attack as an `async` callable that takes a `Rein` brain and returns a `ScenarioResult`.
 2. Register it in the `ATTACKS` registry.
 3. Add a test in `tests/test_adversary.py` that asserts your attack is blocked by the default policy.
 

@@ -7,13 +7,13 @@ import tempfile
 from pathlib import Path
 from typing import List, Optional
 
-from tripwire_ai.types import TripwireState
+from rein_ai.types import ReinState
 
 
 AUDIT_KEEP_LAST = 5000  # truncated at midnight UTC by external rotator (Task 13)
 
 
-def save_state(state: TripwireState, path: Path | str) -> None:
+def save_state(state: ReinState, path: Path | str) -> None:
     """Atomic write: write to .tmp then os.replace into place."""
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -26,14 +26,14 @@ def save_state(state: TripwireState, path: Path | str) -> None:
     os.replace(tmp, str(path))
 
 
-def load_state(path: Path | str) -> Optional[TripwireState]:
-    """Return TripwireState or None on missing/corrupt file."""
+def load_state(path: Path | str) -> Optional[ReinState]:
+    """Return ReinState or None on missing/corrupt file."""
     path = Path(path)
     if not path.exists():
         return None
     try:
         d = json.loads(path.read_text(encoding="utf-8"))
-        return TripwireState.from_dict(d)
+        return ReinState.from_dict(d)
     except (json.JSONDecodeError, KeyError, TypeError, ValueError):
         return None
 

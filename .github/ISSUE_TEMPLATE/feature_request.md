@@ -12,7 +12,7 @@ What problem are you trying to solve? What's the current limitation?
 
 ## Proposed solution
 
-How would you like Tripwire to solve it? API sketch welcome:
+How would you like Rein to solve it? API sketch welcome:
 
 ```python
 # example

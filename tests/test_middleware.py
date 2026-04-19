@@ -6,19 +6,19 @@ from pathlib import Path
 
 import pytest
 
-from tripwire_ai import Tripwire, TripwireConfig, GateBlockedError
-from tripwire_ai.adapters.anthropic import GovernedToolRunner
+from rein_ai import Rein, ReinConfig, GateBlockedError
+from rein_ai.adapters.anthropic import GovernedToolRunner
 
 
 @pytest.fixture
 async def brain(tmp_path: Path):
-    cfg = TripwireConfig(
+    cfg = ReinConfig(
         enabled=True, shadow_mode=False,
         min_samples_for_kill=3, min_samples_for_green=2,
         exec_yellow_fill=0.80, exec_red_fill=0.50, exec_black_fill=0.30,
         exec_min_attempts=3, debounce_seconds=0.0,
     )
-    b = Tripwire(cfg=cfg, persist_dir=tmp_path)
+    b = Rein(cfg=cfg, persist_dir=tmp_path)
     await b.start()
     yield b
     await b.shutdown()

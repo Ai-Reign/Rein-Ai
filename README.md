@@ -1,13 +1,13 @@
-# Tripwire
+# Rein
 
-**The runtime kill-switch for autonomous agents.**
+**Rein in your agents — before they run.**
 
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
 [![License: AGPL v3](https://img.shields.io/badge/license-AGPL--3.0-green.svg)](LICENSE)
-[![Tests: 130 passing](https://img.shields.io/badge/tests-130%20passing-brightgreen.svg)](#status)
-[![PyPI: tripwire-ai](https://img.shields.io/badge/pypi-tripwire--ai-orange.svg)](https://pypi.org/project/tripwire-ai/)
+[![Tests: 135 passing](https://img.shields.io/badge/tests-135%20passing-brightgreen.svg)](#status)
+[![PyPI: rein-ai](https://img.shields.io/badge/pypi-rein--ai-orange.svg)](https://pypi.org/project/rein-ai/)
 
-Tripwire gates every action your agent takes — LLM tool call, trade, email, API request — and halts the system when behavior degrades. Regime-aware Bayesian kill switch, natural-language policies, and a built-in adversarial simulator, all in one drop-in `gate()` call.
+Rein gates every action your agent takes — LLM tool call, trade, email, API request — and halts the system when behavior degrades. Regime-aware Bayesian kill switch, natural-language policies, and a built-in adversarial simulator, all in one drop-in `gate()` call.
 
 Originally extracted from a production Kalshi trading bot where it prevented 12 runaway trades in its first week. Framework-agnostic: works for trading bots, LLM agents, scrapers, RPA, or any system taking actions you don't want spiraling.
 
@@ -17,11 +17,11 @@ Originally extracted from a production Kalshi trading bot where it prevented 12 
 
 Existing AI safety tooling validates **content** — guardrail libraries check whether an LLM's input or output contains PII, profanity, or prompt-injection strings. That's necessary but insufficient. Once an agent is actually *taking actions* — placing trades, sending emails, calling paid APIs, posting to production — content validation is too late. You need a **runtime governor** that can cut off a misbehaving agent mid-flight based on observed outcomes, not just text.
 
-Tripwire is that governor.
+Rein is that governor.
 
 ---
 
-## What Tripwire is
+## What Rein is
 
 A Python library that sits inline with any autonomous system and gates every action. It:
 
@@ -41,15 +41,15 @@ Three things no other governance library has:
 ## 60-second quickstart
 
 ```bash
-pip install tripwire-ai
+pip install rein-ai
 ```
 
 ```python
 import asyncio, time
-from tripwire_ai import Tripwire, TripwireConfig
+from rein_ai import Rein, ReinConfig
 
 async def main():
-    brain = Tripwire(cfg=TripwireConfig.from_env())
+    brain = Rein(cfg=ReinConfig.from_env())
     await brain.start()
 
     # Gate every action
@@ -60,7 +60,7 @@ async def main():
 
     # ...execute the action...
 
-    # Report outcome so Tripwire can learn
+    # Report outcome so Rein can learn
     await brain.record_fill(
         source="llm_agent", series="send_email",
         ticker="msg-123", filled=True,
@@ -87,7 +87,7 @@ async def send_email(to, body): ...
 Stop writing YAML. Describe your policy in English:
 
 ```python
-from tripwire_ai import compile_policy
+from rein_ai import compile_policy
 
 policy = compile_policy([
     "Cap each caller at 8 requests per second with bursts of 16",
@@ -110,7 +110,7 @@ for rule in policy.rules:
 Before you trust your policy, attack it:
 
 ```python
-from tripwire_ai import run_red_team
+from rein_ai import run_red_team
 
 report = await run_red_team(brain)
 print(report.render())
@@ -138,7 +138,7 @@ Full runnable demo: `examples/policy_and_redteam/demo.py`.
                                      │  brain.gate(source, series)
                                      ▼
          ┌─────────────────────────────────────────────────────────┐
-         │                        Tripwire                         │
+         │                          Rein                          │
          │                                                         │
          │  ┌─────────────┐  ┌─────────────┐  ┌────────────────┐   │
          │  │  Regime     │  │  Strategy   │  │   Rate         │   │
@@ -182,12 +182,12 @@ Full runnable demo: `examples/policy_and_redteam/demo.py`.
 
 - **Anthropic Claude** — drop-in `GovernedToolRunner` auto-governs all tool use
   ```python
-  from tripwire_ai.adapters.anthropic import GovernedToolRunner
+  from rein_ai.adapters.anthropic import GovernedToolRunner
   runner = GovernedToolRunner(brain=brain, source="claude_agent", impls={...})
   result = await runner.execute(tool_use_block)
   ```
 - **LangChain** — governed wrapper for any `BaseTool`
-- **FastAPI admin router** — `/tripwire/state`, `/tripwire/halt`, `/tripwire/resume`, `/tripwire/audit` endpoints (optional extra: `pip install tripwire-ai[api]`)
+- **FastAPI admin router** — `/rein/state`, `/rein/halt`, `/rein/resume`, `/rein/audit` endpoints (optional extra: `pip install rein-ai[api]`)
 - **Framework-agnostic** — `@brain.governed()` decorator works on any `async` function
 
 See `examples/llm_agent_governor/` for non-trading use cases.
@@ -197,28 +197,28 @@ See `examples/llm_agent_governor/` for non-trading use cases.
 ## CLI
 
 ```bash
-tripwire compile --policy policy.txt        # show what a policy expands to
-tripwire redteam --policy policy.txt        # run adversarial simulator
-tripwire attacks                            # list registered attack scenarios
+rein compile --policy policy.txt        # show what a policy expands to
+rein redteam --policy policy.txt        # run adversarial simulator
+rein attacks                            # list registered attack scenarios
 ```
 
 ---
 
 ## Configuration
 
-All thresholds are env-overridable. Default prefix `TRIPWIRE_`; pass a custom prefix to `TripwireConfig.from_env(prefix="MYAPP_TRIPWIRE_")` for multi-tenant apps.
+All thresholds are env-overridable. Default prefix `REIN_`; pass a custom prefix to `ReinConfig.from_env(prefix="MYAPP_REIN_")` for multi-tenant apps.
 
 Key vars:
 
 | Var | Default | Purpose |
 |---|---|---|
-| `TRIPWIRE_ENABLED` | `true` | Master on/off |
-| `TRIPWIRE_SHADOW` | `true` | Observe without blocking (safe default) |
-| `TRIPWIRE_EDGE_RED_P` | `0.85` | Edge-axis probability threshold for RED status |
-| `TRIPWIRE_PORTFOLIO_FLOOR_PCT` | `-0.05` | Drawdown % that halts the portfolio |
-| `TRIPWIRE_REGIME_TICK_SECONDS` | `30.0` | How often the regime detector polls |
+| `REIN_ENABLED` | `true` | Master on/off |
+| `REIN_SHADOW` | `true` | Observe without blocking (safe default) |
+| `REIN_EDGE_RED_P` | `0.85` | Edge-axis probability threshold for RED status |
+| `REIN_PORTFOLIO_FLOOR_PCT` | `-0.05` | Drawdown % that halts the portfolio |
+| `REIN_REGIME_TICK_SECONDS` | `30.0` | How often the regime detector polls |
 
-Full list in `src/tripwire_ai/config.py`.
+Full list in `src/rein_ai/config.py`.
 
 ---
 
@@ -231,9 +231,9 @@ Full list in `src/tripwire_ai/config.py`.
 
 ---
 
-## Tripwire vs alternatives
+## Rein vs alternatives
 
-| | Tripwire | Guardrails AI | NeMo Guardrails | Custom code |
+| | Rein | Guardrails AI | NeMo Guardrails | Custom code |
 |---|---|---|---|---|
 | Content validation (PII, profanity) | — | ✅ | ✅ | DIY |
 | Runtime action governance | ✅ | — | — | DIY |
@@ -243,7 +243,7 @@ Full list in `src/tripwire_ai/config.py`.
 | Tamper-evident audit log | ✅ | — | — | DIY |
 | Framework-agnostic | ✅ | ✅ | ✅ | — |
 
-Tripwire and content-guardrail libraries are complementary: use Guardrails/NeMo to validate what the LLM *says*, use Tripwire to govern what the agent *does*.
+Rein and content-guardrail libraries are complementary: use Guardrails/NeMo to validate what the LLM *says*, use Rein to govern what the agent *does*.
 
 ---
 
@@ -251,7 +251,7 @@ Tripwire and content-guardrail libraries are complementary: use Guardrails/NeMo 
 
 **Dual-licensed:**
 
-- **AGPL-3.0** (default — see [`LICENSE`](LICENSE)). Free for OSS, research, and self-hosted use. If you run Tripwire as part of a network service, your service must also be released under AGPL-3.0.
+- **AGPL-3.0** (default — see [`LICENSE`](LICENSE)). Free for OSS, research, and self-hosted use. If you run Rein as part of a network service, your service must also be released under AGPL-3.0.
 - **Commercial License** (see [`COMMERCIAL-LICENSE.md`](COMMERCIAL-LICENSE.md)) for proprietary / SaaS use without copyleft obligations. Contact **firekicks@gmail.com** for a quote.
 
 Contributors: see [`CLA.md`](CLA.md).

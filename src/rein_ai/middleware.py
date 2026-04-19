@@ -1,4 +1,4 @@
-"""Decorators and wrappers that make Tripwire adoption one line.
+"""Decorators and wrappers that make Rein adoption one line.
 
 Instead of:
     decision = brain.gate(source="agent", series=tool_name)

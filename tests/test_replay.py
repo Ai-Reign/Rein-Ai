@@ -6,8 +6,8 @@ from pathlib import Path
 
 import pytest
 
-from tripwire_ai import TripwireConfig
-from tripwire_ai.replay import compare_configs, replay_audit
+from rein_ai import ReinConfig
+from rein_ai.replay import compare_configs, replay_audit
 
 
 def _write_audit(path: Path, events: list):
@@ -23,7 +23,7 @@ async def test_replay_records_all_fills(tmp_path: Path):
          "filled": i % 2 == 0, "slippage_cents": 0.0, "at": 1000.0 + i}
         for i in range(10)
     ])
-    cfg = TripwireConfig(min_samples_for_kill=3, exec_min_attempts=3, debounce_seconds=0.0)
+    cfg = ReinConfig(min_samples_for_kill=3, exec_min_attempts=3, debounce_seconds=0.0)
     result = await replay_audit(audit, cfg)
     assert result.fill_events == 10
 
@@ -40,8 +40,8 @@ async def test_replay_config_comparison_surfaces_tradeoffs(tmp_path: Path):
                        "ticker": f"g{i}", "filled": True, "slippage_cents": 0, "at": float(i)})
     _write_audit(audit, events)
 
-    lenient = TripwireConfig(min_samples_for_kill=50, exec_min_attempts=50, debounce_seconds=0.0)
-    strict  = TripwireConfig(min_samples_for_kill=3, exec_min_attempts=3,
+    lenient = ReinConfig(min_samples_for_kill=50, exec_min_attempts=50, debounce_seconds=0.0)
+    strict  = ReinConfig(min_samples_for_kill=3, exec_min_attempts=3,
                           exec_red_fill=0.50, debounce_seconds=0.0)
 
     results = await compare_configs(audit, {"lenient": lenient, "strict": strict})
@@ -61,5 +61,5 @@ async def test_replay_skips_malformed_lines(tmp_path: Path):
         'not json\n'
         '{"event":"FILL","source":"a","series":"s","ticker":"t2","filled":true,"slippage_cents":0,"at":1}\n'
     )
-    result = await replay_audit(audit, TripwireConfig(debounce_seconds=0.0))
+    result = await replay_audit(audit, ReinConfig(debounce_seconds=0.0))
     assert result.fill_events == 2

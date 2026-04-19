@@ -6,11 +6,11 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from tripwire_ai.regime import (
+from rein_ai.regime import (
     classify_vol, classify_trend, classify_liquidity, classify_time, classify_macro,
     Baselines, RegimeInputs, classify_regime,
 )
-from tripwire_ai.types import Regime
+from rein_ai.types import Regime
 
 
 def test_classify_vol_bucketing():
@@ -96,8 +96,8 @@ import asyncio
 import json as _json
 from pathlib import Path
 
-from tripwire_ai.config import TripwireConfig
-from tripwire_ai.regime import RegimeDetector
+from rein_ai.config import ReinConfig
+from rein_ai.regime import RegimeDetector
 
 
 def _sample_inputs(**over) -> RegimeInputs:
@@ -114,7 +114,7 @@ def _sample_inputs(**over) -> RegimeInputs:
 
 async def test_regime_detector_start_stop_fires_callback(tmp_path: Path):
     received: list[Regime] = []
-    cfg = TripwireConfig(regime_tick_seconds=0.05)
+    cfg = ReinConfig(regime_tick_seconds=0.05)
 
     async def get_inputs() -> RegimeInputs:
         return _sample_inputs()
@@ -154,7 +154,7 @@ async def test_regime_detector_load_persisted_baselines(tmp_path: Path):
         return _sample_inputs()
 
     det = RegimeDetector(
-        cfg=TripwireConfig(),
+        cfg=ReinConfig(),
         get_inputs=get_inputs,
         on_regime=lambda r: None,
         baselines_path=bpath,
@@ -171,7 +171,7 @@ async def test_regime_detector_corrupt_baselines_falls_back(tmp_path: Path):
         return _sample_inputs()
 
     det = RegimeDetector(
-        cfg=TripwireConfig(),
+        cfg=ReinConfig(),
         get_inputs=get_inputs,
         on_regime=lambda r: None,
         baselines_path=bpath,
@@ -191,7 +191,7 @@ async def test_regime_detector_tick_survives_provider_errors(tmp_path: Path):
         return _sample_inputs()
 
     det = RegimeDetector(
-        cfg=TripwireConfig(regime_tick_seconds=0.05),
+        cfg=ReinConfig(regime_tick_seconds=0.05),
         get_inputs=get_inputs,
         on_regime=received.append,
         baselines_path=tmp_path / "baselines.json",
@@ -208,14 +208,14 @@ async def test_regime_detector_tick_survives_provider_errors(tmp_path: Path):
 
 
 async def test_brain_start_wires_regime_detector(tmp_path: Path):
-    """Covers brain.py 83-91: the regime-inputs provider path in Tripwire.start()."""
-    from tripwire_ai.brain import Tripwire
+    """Covers brain.py 83-91: the regime-inputs provider path in Rein.start()."""
+    from rein_ai.brain import Rein
 
     async def get_inputs() -> RegimeInputs:
         return _sample_inputs()
 
-    brain = Tripwire(
-        cfg=TripwireConfig(regime_tick_seconds=0.05),
+    brain = Rein(
+        cfg=ReinConfig(regime_tick_seconds=0.05),
         persist_dir=tmp_path,
         regime_inputs_provider=get_inputs,
     )

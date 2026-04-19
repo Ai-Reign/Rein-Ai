@@ -1,4 +1,4 @@
-"""LangChain adapter — govern LangChain tool calls via Tripwire.
+"""LangChain adapter — govern LangChain tool calls via Rein.
 
 Wraps any `langchain.tools.BaseTool` (or a callable) so every invocation flows
 through brain.gate() + record_fill(). Works with LangChain, CrewAI, LlamaIndex
@@ -6,7 +6,7 @@ agents, or any framework that calls `.invoke()`/`.ainvoke()` on a tool object.
 
 Usage:
     from langchain_core.tools import tool
-    from tripwire_ai.adapters.langchain import govern_tool
+    from rein_ai.adapters.langchain import govern_tool
 
     @tool
     def my_tool(x: str) -> str:
@@ -16,7 +16,7 @@ Usage:
     # Use `governed` wherever you'd use `my_tool` in your agent setup
 
 Or wrap at construction:
-    from tripwire_ai.adapters.langchain import GovernedTool
+    from rein_ai.adapters.langchain import GovernedTool
     governed = GovernedTool(brain=brain, source="agent", inner=my_tool)
 """
 from __future__ import annotations
@@ -42,7 +42,7 @@ def govern_tool(tool, *, brain, source: str, series: str | None = None,
                 success_predicate: Callable[[Any], bool] | None = None):
     """Wrap a LangChain tool (or any object with `.invoke()`/`.ainvoke()`).
 
-    Returns a new tool-like object that routes through Tripwire first.
+    Returns a new tool-like object that routes through Rein first.
     If `tool` is a plain callable, we wrap it as a callable.
     """
     name = series or getattr(tool, "name", None) or getattr(tool, "__name__", "tool")
@@ -59,7 +59,7 @@ def govern_tool(tool, *, brain, source: str, series: str | None = None,
     def _gate_or_raise():
         d = brain.gate(source=source, series=name)
         if not d.allowed:
-            raise RuntimeError(f"tripwire_ai blocked {source}/{name}: {d.reason}")
+            raise RuntimeError(f"rein_ai blocked {source}/{name}: {d.reason}")
         return d
 
     if is_langchain_tool:

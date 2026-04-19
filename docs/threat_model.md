@@ -1,8 +1,8 @@
-# Tripwire — Threat Model
+# Rein — Threat Model
 
 **Version:** 0.1  |  **Last reviewed:** 2026-04-17  |  **Next review:** 2026-07-17
 
-This document is the authoritative threat model for Tripwire. It follows the
+This document is the authoritative threat model for Rein. It follows the
 STRIDE framework (Spoofing, Tampering, Repudiation, Information Disclosure,
 Denial of Service, Elevation of Privilege) and maps every identified risk to a
 specific mitigation in code or operational procedure.
@@ -14,22 +14,22 @@ audit evidence.
 
 ## 1. System Description
 
-Tripwire is a **governance layer for autonomous agents**. It wraps every
+Rein is a **governance layer for autonomous agents**. It wraps every
 action an agent takes (trading, LLM tool call, API call) in a `gate()` check
 and records the outcome. Four in-process subsystems cooperate:
 
 | Subsystem | Purpose | Data persisted |
 |---|---|---|
 | `brain.gate()` | Hot-path allow/deny decision | none directly |
-| `StrategyScorer` | Bayesian posterior tracking of strategy performance | `tripwire_state.json` |
-| `RegimeDetector` | Classifies environmental state | `tripwire_baselines.json` |
+| `StrategyScorer` | Bayesian posterior tracking of strategy performance | `rein_state.json` |
+| `RegimeDetector` | Classifies environmental state | `rein_baselines.json` |
 | `CircuitBreaker` | Portfolio-level halt condition | in-memory + state |
 | `TokenBucketLimiter` | Per-caller resource quota | in-memory |
 | `AnomalyDetector` | Rolling-window activity analysis | in-memory |
-| `secure_audit` | Hash-chained tamper-evident log | `tripwire_audit.jsonl` |
+| `secure_audit` | Hash-chained tamper-evident log | `rein_audit.jsonl` |
 | FastAPI admin router | Operator HTTP interface | none |
 
-**In scope:** the `tripwire_ai` Python library, its admin API, its on-disk
+**In scope:** the `rein_ai` Python library, its admin API, its on-disk
 persistence, and the documented deployment pattern (reverse proxy + mTLS).
 
 **Out of scope:** the host OS, the Python runtime itself, the underlying
@@ -56,17 +56,17 @@ implementation correctness.
                ▼
 ┌─────────────────────────────────────────────────────────────────┐
 │  APP ZONE (trusted)                                             │
-│  FastAPI router → RBAC check → Tripwire methods                │
+│  FastAPI router → RBAC check → Rein methods                │
 │  gate() / record_fill() / record_exit() → StrategyScorer        │
-│  → append_signed() → tripwire_audit.jsonl                           │
+│  → append_signed() → rein_audit.jsonl                           │
 └──────────────┬──────────────────────────────────────────────────┘
                │  [Boundary C — disk I/O]
                ▼
 ┌─────────────────────────────────────────────────────────────────┐
 │  FS ZONE                                                        │
-│  tripwire_state.json (latest snapshot, atomic write)                │
-│  tripwire_audit.jsonl (append-only, HMAC-signed chain)              │
-│  tripwire_baselines.json (refreshed every 6h)                       │
+│  rein_state.json (latest snapshot, atomic write)                │
+│  rein_audit.jsonl (append-only, HMAC-signed chain)              │
+│  rein_baselines.json (refreshed every 6h)                       │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
@@ -87,8 +87,8 @@ implementation correctness.
 | `META_AUDIT_KEY` (HMAC secret) | **Critical** | Allows forging audit entries |
 | `META_AUTH_TOKENS` (bearer tokens) | **Critical** | Allows operator actions |
 | mTLS CA private key (proxy side) | **Critical** | Allows minting client certs |
-| `tripwire_audit.jsonl` | **High** | Compliance evidence; chain integrity must survive |
-| `tripwire_state.json` | **Medium** | Strategy health; can be regenerated from replay |
+| `rein_audit.jsonl` | **High** | Compliance evidence; chain integrity must survive |
+| `rein_state.json` | **Medium** | Strategy health; can be regenerated from replay |
 | Strategy metadata (source/series names) | **Low** | Operational, not secret |
 | Regime classifications | **Low** | Derived from public market data |
 
@@ -112,7 +112,7 @@ implementation correctness.
 | T1 | Attacker modifies historical audit entry | Hash chain (`secure_audit`): mutation changes `hash`, verification fails on next pass. HMAC adds signature-level tamper detection. | Attacker with concurrent write access AND the HMAC key can forge. Mitigated by key storage (env → secrets manager in prod). |
 | T2 | Attacker deletes an audit entry | Hash chain: deletion breaks `prev_hash` link of next entry. `verify_chain()` detects first bad line. | Detection is after-the-fact. Mitigate with WORM storage or S3 object-lock for high-security deployments. |
 | T3 | Attacker reorders audit entries | Hash chain: reorder = hash mismatch. Detected. | Same as T2. |
-| T4 | Attacker modifies `tripwire_state.json` in flight | Atomic write via `os.replace()`; any torn write is rejected on load (invalid JSON). | If attacker has write access to the dir, they can replace with a valid-but-adversarial state. Mitigate with filesystem ACL + dir-level monitoring. |
+| T4 | Attacker modifies `rein_state.json` in flight | Atomic write via `os.replace()`; any torn write is rejected on load (invalid JSON). | If attacker has write access to the dir, they can replace with a valid-but-adversarial state. Mitigate with filesystem ACL + dir-level monitoring. |
 | T5 | Attacker plants malicious baselines file | `RegimeDetector._load_baselines` accepts any valid JSON matching shape. | Could inject adversarial regime classifications. Mitigate with signing on baseline refresh (**Phase 3 item**). |
 
 ### 4.3 Repudiation
@@ -126,9 +126,9 @@ implementation correctness.
 
 | # | Threat | Mitigation | Residual |
 |---|---|---|---|
-| I1 | Raw bearer token written to logs | `auth.py` logs only SHA-256(token)[:12] handle. `/tripwire/whoami` asserts raw token never appears in response (tested). | Careless operator logs leak via print/logger — operational hygiene. |
-| I2 | Audit log read by unauthorized party | `/tripwire/audit` requires `reader` role. Direct FS read requires host access. | If host is compromised, logs are readable. Mitigate with disk encryption at rest. |
-| I3 | Strategy performance leaks via metrics endpoint | `/tripwire/metrics` requires `reader` role. | Metrics aggregate — don't reveal trade-level detail. |
+| I1 | Raw bearer token written to logs | `auth.py` logs only SHA-256(token)[:12] handle. `/rein/whoami` asserts raw token never appears in response (tested). | Careless operator logs leak via print/logger — operational hygiene. |
+| I2 | Audit log read by unauthorized party | `/rein/audit` requires `reader` role. Direct FS read requires host access. | If host is compromised, logs are readable. Mitigate with disk encryption at rest. |
+| I3 | Strategy performance leaks via metrics endpoint | `/rein/metrics` requires `reader` role. | Metrics aggregate — don't reveal trade-level detail. |
 | I4 | Crash traceback leaks internal paths / env | FastAPI default behavior in dev mode; production should run with `debug=False`. | Responsibility of deploying app. Document in deployment guide. |
 
 ### 4.5 Denial of Service
@@ -136,7 +136,7 @@ implementation correctness.
 | # | Threat | Mitigation | Residual |
 |---|---|---|---|
 | D1 | Runaway agent floods `gate()` | `TokenBucketLimiter` per-key + global. Configurable. | Default config has no rate limit → caller must opt in. Document strongly. |
-| D2 | `tripwire_audit.jsonl` grows unbounded | Rotation is the caller's responsibility (logrotate / daily archiver). Docs explicitly call this out. | Unbounded growth eventually exhausts disk. Operational. |
+| D2 | `rein_audit.jsonl` grows unbounded | Rotation is the caller's responsibility (logrotate / daily archiver). Docs explicitly call this out. | Unbounded growth eventually exhausts disk. Operational. |
 | D3 | Many distinct `(source, series)` pairs exhaust memory | `_first_seen`, `_events`, `_buckets` dicts grow with cardinality. | In-process only. Worst case: OOM. Mitigate with `source` allowlist in prod (**Phase 3**). |
 | D4 | Slowloris on admin API | FastAPI + uvicorn has timeouts. Reverse proxy should set aggressive read timeouts. | Config responsibility of proxy layer. |
 | D5 | Malformed audit entry stops `verify_chain()` early | Design: `verify_chain` returns `first_bad_line` instead of crashing. | Attacker can append garbage to end of file — detection is on purpose. |
@@ -197,9 +197,9 @@ Scored Likelihood (L) × Impact (I), each 1-5.
 |---|---|
 | Token expiry / rotation | Add `expires_at` to token config, reject expired on auth |
 | Secrets-manager integration | Vault / AWS Secrets Manager plugin |
-| Signed baselines file | HMAC signature on `tripwire_baselines.json` |
-| Open-mode startup warning | Log loud warning + add `/tripwire/whoami` diagnostic |
-| `source` allowlist | Config-driven `allowed_sources` in `TripwireConfig` |
+| Signed baselines file | HMAC signature on `rein_baselines.json` |
+| Open-mode startup warning | Log loud warning + add `/rein/whoami` diagnostic |
+| `source` allowlist | Config-driven `allowed_sources` in `ReinConfig` |
 | Envoy / Traefik mTLS configs | Ship ready-to-paste configs in `mtls_deployment.md` |
 | External pentest | Q3 2026 — scope: admin API, audit chain, rate limiter |
 
@@ -209,10 +209,10 @@ Scored Likelihood (L) × Impact (I), each 1-5.
 
 This threat model holds under these assumptions. If any becomes false, re-review.
 
-1. **The host OS is not compromised.** Tripwire is not designed to defend against a root-level attacker on its own host.
-2. **The reverse proxy is correctly configured.** Tripwire's trust boundary begins at the proxy's ingress.
+1. **The host OS is not compromised.** Rein is not designed to defend against a root-level attacker on its own host.
+2. **The reverse proxy is correctly configured.** Rein's trust boundary begins at the proxy's ingress.
 3. **The Python runtime is not compromised.** Supply-chain attacks against `pip install anthropic` / `fastapi` / etc. are out of scope — follow the CISA software supply-chain guidelines.
-4. **Logs are rotated and retained by the operator.** Tripwire does not rotate its own logs.
+4. **Logs are rotated and retained by the operator.** Rein does not rotate its own logs.
 5. **Time is roughly correct.** Tested against clock jumps up to 24h. Larger deliberate time-skew attacks are out of scope.
 
 ---

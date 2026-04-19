@@ -31,4 +31,4 @@ jobs:
         run: pytest -q
 
       - name: CLI smoke test
-        run: tripwire --help
+        run: rein --help

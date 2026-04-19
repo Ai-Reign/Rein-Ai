@@ -1,8 +1,8 @@
-# Tripwire — Commercial License
+# Rein — Commercial License
 
-Tripwire is dual-licensed:
+Rein is dual-licensed:
 
-1. **AGPL-3.0** (default, see `LICENSE`) — free to use, modify, and self-host. If you run Tripwire as part of a network service, you must release the complete source code of your service under AGPL-3.0.
+1. **AGPL-3.0** (default, see `LICENSE`) — free to use, modify, and self-host. If you run Rein as part of a network service, you must release the complete source code of your service under AGPL-3.0.
 
 2. **Commercial License** (this document) — for organizations that cannot or do not want to comply with AGPL-3.0 obligations.
 
@@ -12,9 +12,9 @@ Tripwire is dual-licensed:
 
 You need a commercial license if **any** of the following apply:
 
-- You embed Tripwire in a proprietary product or SaaS
-- You modify Tripwire and do not want to release your modifications
-- You offer Tripwire (or a derivative) as part of a hosted service to third parties
+- You embed Rein in a proprietary product or SaaS
+- You modify Rein and do not want to release your modifications
+- You offer Rein (or a derivative) as part of a hosted service to third parties
 - Your legal/compliance team prohibits AGPL-licensed code in your stack
 - You require indemnification, SLA-backed support, or a signed contract
 
@@ -29,12 +29,12 @@ If you are an individual, researcher, hobbyist, or open-source project comfortab
 | **Startup** (< $5M ARR, < 25 employees) | Single product, one production deployment | $4,800/yr |
 | **Growth** ($5M–$50M ARR) | Up to 5 production deployments, email support | $24,000/yr |
 | **Enterprise** ($50M+ ARR) | Unlimited deployments, SLA, indemnification, priority patches | $96,000/yr+ |
-| **OEM / Embed** | Redistribute Tripwire inside your own product | Custom |
+| **OEM / Embed** | Redistribute Rein inside your own product | Custom |
 
 All tiers include:
 - Perpetual rights to the licensed version (no rug-pull on existing deployments)
 - Removal of AGPL copyleft obligations for your use
-- Written indemnification against IP claims on the Tripwire code itself
+- Written indemnification against IP claims on the Rein code itself
 
 Enterprise and OEM tiers include:
 - Direct access to the maintainer
@@ -46,15 +46,15 @@ Enterprise and OEM tiers include:
 
 ## What a commercial license grants
 
-- Right to use, modify, and distribute Tripwire in proprietary/closed-source products
+- Right to use, modify, and distribute Rein in proprietary/closed-source products
 - Right to deploy as part of a hosted/SaaS offering without AGPL source-disclosure obligations
 - Right to sublicense to your end customers as part of a larger combined product
 
 ## What it does not grant
 
-- Rights to the Tripwire trademark or logo (separate trademark agreement required)
-- Patent rights beyond those required to use Tripwire itself
-- Resale of Tripwire as a standalone product (OEM tier required)
+- Rights to the Rein trademark or logo (separate trademark agreement required)
+- Patent rights beyond those required to use Rein itself
+- Resale of Rein as a standalone product (OEM tier required)
 
 ---
 
@@ -63,7 +63,7 @@ Enterprise and OEM tiers include:
 Email **firekicks@gmail.com** with:
 1. Company name + website
 2. Approximate ARR + headcount band
-3. Brief description of how you intend to use Tripwire
+3. Brief description of how you intend to use Rein
 4. Production deployment count (current + 12-month projection)
 
 Quote returned within 2 business days. Standard commercial terms; happy to redline a mutual MNDA first.
@@ -72,10 +72,10 @@ Quote returned within 2 business days. Standard commercial terms; happy to redli
 
 ## FAQ
 
-**Q: We're evaluating Tripwire. Do we need a license to test?**
+**Q: We're evaluating Rein. Do we need a license to test?**
 No. Internal evaluation, prototyping, and non-production testing are permitted under AGPL-3.0 without triggering source-disclosure for code that never ships externally.
 
-**Q: We use Tripwire only in internal tools — do we need a commercial license?**
+**Q: We use Rein only in internal tools — do we need a commercial license?**
 If your internal tool is not exposed to third parties over a network, AGPL-3.0 is usually fine. If it is exposed (e.g., a customer-facing dashboard), you likely need a commercial license. When in doubt, ask.
 
 **Q: What if we contribute back?**

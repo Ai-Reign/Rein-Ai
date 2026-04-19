@@ -11,18 +11,18 @@ from pathlib import Path
 
 import pytest
 
-from tripwire_ai import Tripwire, TripwireConfig
-from tripwire_ai.adapters.langchain import govern_tool
+from rein_ai import Rein, ReinConfig
+from rein_ai.adapters.langchain import govern_tool
 
 
 @pytest.fixture
 async def brain(tmp_path: Path):
-    cfg = TripwireConfig(
+    cfg = ReinConfig(
         enabled=True, shadow_mode=False,
         min_samples_for_kill=3, exec_min_attempts=3,
         exec_red_fill=0.50, debounce_seconds=0.0,
     )
-    b = Tripwire(cfg=cfg, persist_dir=tmp_path)
+    b = Rein(cfg=cfg, persist_dir=tmp_path)
     await b.start()
     yield b
     await b.shutdown()

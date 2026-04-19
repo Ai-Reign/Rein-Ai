@@ -1,4 +1,4 @@
-"""Tripwire orchestrator: starts sidecars, exposes gate(), records events,
+"""Rein orchestrator: starts sidecars, exposes gate(), records events,
 persists state, exposes a snapshot.
 """
 from __future__ import annotations
@@ -9,37 +9,37 @@ import time
 from pathlib import Path
 from typing import Awaitable, Callable, Optional
 
-from tripwire_ai.anomaly import AnomalyAlert, AnomalyDetector
-from tripwire_ai.circuit_breaker import CircuitBreakerVerdict, evaluate_circuit_breaker
-from tripwire_ai.config import TripwireConfig
-from tripwire_ai.persist import load_state, save_state
-from tripwire_ai.rate_limit import TokenBucketLimiter
-from tripwire_ai.regime import RegimeDetector, RegimeInputs
-from tripwire_ai.strategy_scorer import ExitEvent, FillEvent, StrategyScorer
-from tripwire_ai.types import AllowDecision, TripwireState, Regime, Status, StrategyHealth
+from rein_ai.anomaly import AnomalyAlert, AnomalyDetector
+from rein_ai.circuit_breaker import CircuitBreakerVerdict, evaluate_circuit_breaker
+from rein_ai.config import ReinConfig
+from rein_ai.persist import load_state, save_state
+from rein_ai.rate_limit import TokenBucketLimiter
+from rein_ai.regime import RegimeDetector, RegimeInputs
+from rein_ai.strategy_scorer import ExitEvent, FillEvent, StrategyScorer
+from rein_ai.types import AllowDecision, ReinState, Regime, Status, StrategyHealth
 
 
-log = logging.getLogger("tripwire.brain")
+log = logging.getLogger("rein.brain")
 
 
 SAFE_MODE_STALE_SECONDS = 10 * 60
 
 
-class Tripwire:
+class Rein:
     def __init__(
         self,
-        cfg: Optional[TripwireConfig] = None,
+        cfg: Optional[ReinConfig] = None,
         persist_dir: Optional[Path] = None,
         regime_inputs_provider: Optional[Callable[[], Awaitable[RegimeInputs]]] = None,
         rate_limiter: Optional[TokenBucketLimiter] = None,
         anomaly_detector: Optional[AnomalyDetector] = None,
     ):
-        self.cfg = cfg or TripwireConfig.from_env()
-        self.persist_dir = Path(persist_dir) if persist_dir else Path("./tripwire_state")
+        self.cfg = cfg or ReinConfig.from_env()
+        self.persist_dir = Path(persist_dir) if persist_dir else Path("./rein_state")
         self.persist_dir.mkdir(parents=True, exist_ok=True)
-        self.state_path = self.persist_dir / "tripwire_state.json"
-        self.audit_path = self.persist_dir / "tripwire_audit.jsonl"
-        self.baselines_path = self.persist_dir / "tripwire_baselines.json"
+        self.state_path = self.persist_dir / "rein_state.json"
+        self.audit_path = self.persist_dir / "rein_audit.jsonl"
+        self.baselines_path = self.persist_dir / "rein_baselines.json"
 
         self._state = self._load_or_fresh()
         self._scorer = StrategyScorer(cfg=self.cfg, state=self._state, audit_path=self.audit_path)
@@ -59,17 +59,17 @@ class Tripwire:
 
     # ---------- lifecycle ----------
 
-    def _load_or_fresh(self) -> TripwireState:
+    def _load_or_fresh(self) -> ReinState:
         loaded = load_state(self.state_path)
         if loaded is None:
-            log.info("[TRIPWIRE] no prior state — starting fresh in safe mode")
-            return TripwireState.fresh()
+            log.info("[REIN] no prior state — starting fresh in safe mode")
+            return ReinState.fresh()
         try:
             mtime = self.state_path.stat().st_mtime
         except FileNotFoundError:
             mtime = 0.0
         if time.time() - mtime > SAFE_MODE_STALE_SECONDS:
-            log.warning("[TRIPWIRE] state file stale; demoting all GREEN → YELLOW for safety")
+            log.warning("[REIN] state file stale; demoting all GREEN → YELLOW for safety")
             for sh in loaded.health.values():
                 if sh.status == Status.GREEN:
                     sh.status = Status.YELLOW
@@ -78,7 +78,7 @@ class Tripwire:
 
     async def start(self) -> None:
         if not self.cfg.enabled:
-            log.info("[TRIPWIRE] disabled by config — gate() always GREEN")
+            log.info("[REIN] disabled by config — gate() always GREEN")
             return
         if self._regime_inputs_provider is not None:
             self._detector = RegimeDetector(
@@ -89,8 +89,8 @@ class Tripwire:
                 audit_path=self.audit_path,
             )
             await self._detector.start()
-        self._persist_task = asyncio.create_task(self._persist_loop(), name="tripwire.persist")
-        self._scorer_tick_task = asyncio.create_task(self._scorer_tick_loop(), name="tripwire.scorer.tick")
+        self._persist_task = asyncio.create_task(self._persist_loop(), name="rein.persist")
+        self._scorer_tick_task = asyncio.create_task(self._scorer_tick_loop(), name="rein.scorer.tick")
 
     async def shutdown(self) -> None:
         self._stop.set()
@@ -125,7 +125,7 @@ class Tripwire:
             self._state.version += 1
             save_state(self._state, self.state_path)
         except Exception as e:
-            log.warning(f"[TRIPWIRE] persist failed: {e}")
+            log.warning(f"[REIN] persist failed: {e}")
 
     def _on_regime(self, r: Regime) -> None:
         self._state.regime = r
@@ -196,13 +196,13 @@ class Tripwire:
         if verdict.halt and not self._state.halted:
             self._state.halted = True
             self._state.halted_reason = verdict.reason
-            log.warning(f"[TRIPWIRE] HALT {verdict.reason} cancel_open={verdict.cancel_open}")
+            log.warning(f"[REIN] HALT {verdict.reason} cancel_open={verdict.cancel_open}")
         return verdict
 
     def manual_resume(self) -> None:
         self._state.halted = False
         self._state.halted_reason = None
-        log.info("[TRIPWIRE] manual resume")
+        log.info("[REIN] manual resume")
 
     def manual_revive(self, source: str, series: str, operator_reason: str = "") -> bool:
         sh = self._state.health.get((source, series))
@@ -218,7 +218,7 @@ class Tripwire:
             "reason": f"manual_revive: {operator_reason}",
             "at": time.time(),
         })
-        log.info(f"[TRIPWIRE] REVIVE {source} {series} ({operator_reason})")
+        log.info(f"[REIN] REVIVE {source} {series} ({operator_reason})")
         return True
 
     def force_status(self, source: str, series: str, status: Status, reason: str, ttl_seconds: float = 0.0) -> None:
@@ -250,5 +250,5 @@ class Tripwire:
         fill/exit are recorded automatically. Raises GateBlockedError on deny
         unless `raise_on_block=False`.
         """
-        from tripwire_ai.middleware import make_governed
+        from rein_ai.middleware import make_governed
         return make_governed(self)(*args, **kwargs)

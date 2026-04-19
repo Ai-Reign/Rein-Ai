@@ -3,9 +3,9 @@ from __future__ import annotations
 
 import pytest
 
-from tripwire_ai import compile_policy, list_attacks, run_red_team
-from tripwire_ai.brain import Tripwire
-from tripwire_ai.config import TripwireConfig
+from rein_ai import compile_policy, list_attacks, run_red_team
+from rein_ai.brain import Rein
+from rein_ai.config import ReinConfig
 
 
 @pytest.mark.asyncio
@@ -31,7 +31,7 @@ async def test_runaway_loop_caught_by_rate_limiter(tmp_path):
 
 @pytest.mark.asyncio
 async def test_runaway_loop_missed_without_rate_limiter(tmp_path):
-    brain = Tripwire(cfg=TripwireConfig(shadow_mode=False), persist_dir=tmp_path)
+    brain = Rein(cfg=ReinConfig(shadow_mode=False), persist_dir=tmp_path)
     report = await run_red_team(brain, attacks=["runaway_loop"])
     out = report.outcomes[0]
     assert not out.blocked
@@ -72,7 +72,7 @@ async def test_portfolio_drain_trips_breaker(tmp_path):
     cfg = policy.config
     # turn off shadow so the breaker enforces
     from dataclasses import replace
-    brain = Tripwire(cfg=replace(cfg, shadow_mode=False), persist_dir=tmp_path)
+    brain = Rein(cfg=replace(cfg, shadow_mode=False), persist_dir=tmp_path)
     report = await run_red_team(brain, attacks=["portfolio_drain"])
     out = report.outcomes[0]
     assert out.blocked, f"portfolio_drain not caught: {out.notes}"
@@ -86,7 +86,7 @@ async def test_full_battery_returns_catch_rate(tmp_path):
         "Alert when deny rate exceeds 50 percent over 60 second window",
     ], use_llm_fallback=False)
     from dataclasses import replace
-    brain = Tripwire(cfg=replace(policy.config, shadow_mode=False),
+    brain = Rein(cfg=replace(policy.config, shadow_mode=False),
                       persist_dir=tmp_path,
                       rate_limiter=policy.rate_limiter,
                       anomaly_detector=policy.anomaly_detector)
@@ -101,7 +101,7 @@ async def test_full_battery_returns_catch_rate(tmp_path):
 
 @pytest.mark.asyncio
 async def test_report_serialises_to_dict(tmp_path):
-    brain = Tripwire(cfg=TripwireConfig(shadow_mode=False), persist_dir=tmp_path)
+    brain = Rein(cfg=ReinConfig(shadow_mode=False), persist_dir=tmp_path)
     report = await run_red_team(brain, attacks=["runaway_loop"])
     d = report.to_dict()
     assert "catch_rate" in d

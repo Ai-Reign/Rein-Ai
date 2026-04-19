@@ -1,4 +1,4 @@
-"""Concurrency stress tests — verify Tripwire holds up under parallel load.
+"""Concurrency stress tests — verify Rein holds up under parallel load.
 
 These exercise the hot path (gate + record_fill + record_exit) from many
 coroutines simultaneously. If any of these fail, the library is unsafe for
@@ -12,16 +12,16 @@ from pathlib import Path
 
 import pytest
 
-from tripwire_ai import Tripwire, TripwireConfig
+from rein_ai import Rein, ReinConfig
 
 
 @pytest.fixture
 async def brain(tmp_path: Path):
-    cfg = TripwireConfig(enabled=True, shadow_mode=False,
+    cfg = ReinConfig(enabled=True, shadow_mode=False,
                      min_samples_for_kill=5, exec_min_attempts=5,
                      debounce_seconds=0.0,
                      persist_tick_seconds=0.5, regime_tick_seconds=0.5)
-    b = Tripwire(cfg=cfg, persist_dir=tmp_path)
+    b = Rein(cfg=cfg, persist_dir=tmp_path)
     await b.start()
     yield b
     await b.shutdown()
@@ -94,6 +94,6 @@ async def test_persist_under_concurrent_writes(brain, tmp_path: Path):
     await asyncio.gather(writer(), writer(), persister())
 
     # Reload state file — it should parse cleanly (not corrupted mid-write)
-    from tripwire_ai.persist import load_state
-    state = load_state(tmp_path / "tripwire_state.json")
+    from rein_ai.persist import load_state
+    state = load_state(tmp_path / "rein_state.json")
     assert state is not None, "persist corrupted state file"

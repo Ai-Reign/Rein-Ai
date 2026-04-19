@@ -15,12 +15,12 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Awaitable, Callable, Dict, Optional
 
-from tripwire_ai.config import TripwireConfig
-from tripwire_ai.persist import append_audit
-from tripwire_ai.types import Regime
+from rein_ai.config import ReinConfig
+from rein_ai.persist import append_audit
+from rein_ai.types import Regime
 
 
-log = logging.getLogger("tripwire.regime")
+log = logging.getLogger("rein.regime")
 
 
 @dataclass
@@ -138,7 +138,7 @@ class RegimeDetector:
 
     def __init__(
         self,
-        cfg: TripwireConfig,
+        cfg: ReinConfig,
         get_inputs: Callable[[], Awaitable[RegimeInputs]],
         on_regime: Callable[[Regime], None],
         macro_calendar: Optional[Dict[str, str]] = None,
@@ -182,7 +182,7 @@ class RegimeDetector:
             self.baselines = await self.baselines_provider()
             self._save_baselines()
             self._last_baseline_refresh = time.time()
-        self._task = asyncio.create_task(self._run(), name="tripwire.regime")
+        self._task = asyncio.create_task(self._run(), name="rein.regime")
 
     async def stop(self) -> None:
         self._stop.set()
@@ -205,7 +205,7 @@ class RegimeDetector:
                             "to": new_regime.regime_id(),
                             "at": new_regime.classified_at,
                         })
-                    log.info(f"[TRIPWIRE] REGIME {self._last_regime.regime_id() if self._last_regime else 'init'}->{new_regime.regime_id()}")
+                    log.info(f"[REIN] REGIME {self._last_regime.regime_id() if self._last_regime else 'init'}->{new_regime.regime_id()}")
                 self._last_regime = new_regime
                 self.on_regime(new_regime)
 
@@ -215,7 +215,7 @@ class RegimeDetector:
                     self._save_baselines()
                     self._last_baseline_refresh = time.time()
             except Exception as e:
-                log.warning(f"[TRIPWIRE] RegimeDetector tick error: {e}")
+                log.warning(f"[REIN] RegimeDetector tick error: {e}")
             try:
                 await asyncio.wait_for(self._stop.wait(), timeout=self.cfg.regime_tick_seconds)
             except asyncio.TimeoutError:

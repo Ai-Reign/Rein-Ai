@@ -1,6 +1,6 @@
-"""Configurable thresholds for the Tripwire. All env-overridable.
+"""Configurable thresholds for the Rein. All env-overridable.
 
-Env prefix is configurable — default 'TRIPWIRE_'. Pass prefix='APPNAME_TRIPWIRE_'
+Env prefix is configurable — default 'REIN_'. Pass prefix='APPNAME_REIN_'
 (or whatever your domain uses) to from_env() for backwards-compat.
 """
 from __future__ import annotations
@@ -27,7 +27,7 @@ def _envb(name: str, default: bool) -> bool:
 
 
 @dataclass(frozen=True)
-class TripwireConfig:
+class ReinConfig:
     # Cold-start protection
     min_samples_for_kill: int = 10
     min_samples_for_green: int = 20
@@ -73,7 +73,7 @@ class TripwireConfig:
     shadow_mode: bool = True
 
     @classmethod
-    def from_env(cls, prefix: str = "TRIPWIRE_") -> "TripwireConfig":
+    def from_env(cls, prefix: str = "REIN_") -> "ReinConfig":
         p = prefix
         return cls(
             min_samples_for_kill=_envi(f"{p}MIN_SAMPLES_FOR_KILL", 10),

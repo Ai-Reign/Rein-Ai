@@ -1,8 +1,8 @@
-"""Real Claude agent governed by Tripwire.
+"""Real Claude agent governed by Rein.
 
 Replaces the synthetic fake-agent demo with actual Claude API calls. A Claude
 agent is given 4 simple "tools" (really Python functions); one of them is
-intentionally broken so it always returns an error. Tripwire watches the
+intentionally broken so it always returns an error. Rein watches the
 fill rate for each (tool, task) pair and kills the broken combo after a few
 failures — preventing further wasted tokens.
 
@@ -23,8 +23,8 @@ from pathlib import Path
 
 import anthropic
 
-from tripwire_ai import Tripwire, TripwireConfig
-from tripwire_ai.regime import RegimeInputs
+from rein_ai import Rein, ReinConfig
+from rein_ai.regime import RegimeInputs
 
 
 # Load API key from the `.env` file if not already set
@@ -65,7 +65,7 @@ def tool_reverse_string(text: str) -> str:
 
 
 def tool_broken_translator(text: str, target_language: str) -> str:
-    """BROKEN tool: always returns error. Tripwire should detect + kill."""
+    """BROKEN tool: always returns error. Rein should detect + kill."""
     return f"error: translator service unavailable (attempted {target_language})"
 
 
@@ -101,7 +101,7 @@ TASKS = [
     ("Translate 'thank you' to German.", "translate"),
     ("Reverse 'governor'.", "reverse"),
     ("Translate 'goodbye' to Italian.", "translate"),
-    ("Count the words in: 'Tripwire watches every action.'", "word_count"),
+    ("Count the words in: 'Rein watches every action.'", "word_count"),
     ("Translate 'yes' to Japanese.", "translate"),
     ("What is 99 + 1?", "calculator"),
     ("Translate 'no' to Mandarin.", "translate"),
@@ -118,7 +118,7 @@ TASKS = [
 # ---------- Glue: run a single turn against Claude ----------
 
 async def run_one_turn(client: anthropic.AsyncAnthropic, task: str, expected_tool: str,
-                       brain: Tripwire, turn_idx: int) -> tuple[str, bool, float]:
+                       brain: Rein, turn_idx: int) -> tuple[str, bool, float]:
     """Ask Claude to solve `task` using the available tools. Returns (result, success, duration_s)."""
     t0 = time.time()
     messages = [{"role": "user", "content": task}]
@@ -142,7 +142,7 @@ async def run_one_turn(client: anthropic.AsyncAnthropic, task: str, expected_too
     tool_name = tool_block.name
     tool_input = tool_block.input
 
-    # *** Tripwire gate: should we let this tool call proceed? ***
+    # *** Rein gate: should we let this tool call proceed? ***
     series = tool_name  # one (source=agent, series=tool_name) per tool
     decision = brain.gate(source="claude_agent", series=series)
     if not decision.allowed:
@@ -155,7 +155,7 @@ async def run_one_turn(client: anthropic.AsyncAnthropic, task: str, expected_too
     result = impl(**tool_input)
     success = not result.startswith("error:")
 
-    # Record into Tripwire
+    # Record into Rein
     await brain.record_fill(
         source="claude_agent", series=series, ticker=f"turn-{turn_idx}",
         filled=success, slippage_cents=0.0, attempt_at=time.time(),
@@ -185,7 +185,7 @@ async def main():
         print("ERROR: ANTHROPIC_API_KEY not set. Source ~/.env first.")
         return
 
-    cfg = TripwireConfig(
+    cfg = ReinConfig(
         enabled=True,
         shadow_mode=False,
         min_samples_for_kill=4,
@@ -203,7 +203,7 @@ async def main():
             f.unlink()
     persist.mkdir(parents=True, exist_ok=True)
 
-    brain = Tripwire(
+    brain = Rein(
         cfg=cfg,
         persist_dir=persist,
         regime_inputs_provider=regime_inputs_provider,
@@ -234,7 +234,7 @@ async def main():
     print("=" * 70)
     print(f"Summary: {sum(1 for r in results if r[3])} succeeded, "
           f"{sum(1 for r in results if not r[3] and not r[2].startswith('GATE'))} failed, "
-          f"{blocked} blocked by Tripwire")
+          f"{blocked} blocked by Rein")
     print()
     print("Strategy health after run:")
     snap = brain.snapshot()
@@ -243,7 +243,7 @@ async def main():
         icon = {"green": "✅", "yellow": "⚠️ ", "red": "❌", "black": "⛔"}.get(status, "?")
         print(f"  {icon} {key:40s} status={status:<6s}  {health.get('kill_reason') or ''}")
 
-    # How much would we have wasted without Tripwire?
+    # How much would we have wasted without Rein?
     broken_calls_allowed = sum(1 for _, t, m, _ in results
                                 if t == "translate" and not m.startswith("GATE"))
     broken_calls_blocked = sum(1 for _, t, m, _ in results
@@ -254,7 +254,7 @@ async def main():
     print(f"Wasted tokens prevented:          ~{broken_calls_blocked * 250} tokens")
 
     await brain.shutdown()
-    print(f"\nAudit log: {persist / 'tripwire_audit.jsonl'}")
+    print(f"\nAudit log: {persist / 'rein_audit.jsonl'}")
 
 
 if __name__ == "__main__":

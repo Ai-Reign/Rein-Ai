@@ -1,4 +1,4 @@
-"""Authentication + RBAC for the Tripwire admin API.
+"""Authentication + RBAC for the Rein admin API.
 
 Supports two auth modes (non-exclusive):
 

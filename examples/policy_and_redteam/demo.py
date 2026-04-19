@@ -1,7 +1,7 @@
 """End-to-end demo: write a policy in English, simulate attacks against it.
 
 Run:
-    cd ~/Desktop/tripwire-ai
+    cd ~/Desktop/rein-ai
     pip install -e .
     python3 examples/policy_and_redteam/demo.py
 
@@ -17,8 +17,8 @@ import tempfile
 from dataclasses import replace
 from pathlib import Path
 
-from tripwire_ai import compile_policy, run_red_team
-from tripwire_ai.brain import Tripwire
+from rein_ai import compile_policy, run_red_team
+from rein_ai.brain import Rein
 
 
 POLICY = [
@@ -31,7 +31,7 @@ POLICY = [
 
 async def main() -> None:
     print("=" * 64)
-    print("TRIPWIRE — natural-language policy + red team demo")
+    print("REIN — natural-language policy + red team demo")
     print("=" * 64)
     print()
     print("Operator policy (English):")
@@ -44,7 +44,7 @@ async def main() -> None:
     print()
 
     with tempfile.TemporaryDirectory() as td:
-        brain = Tripwire(
+        brain = Rein(
             cfg=replace(policy.config, shadow_mode=False),
             persist_dir=Path(td),
             rate_limiter=policy.rate_limiter,

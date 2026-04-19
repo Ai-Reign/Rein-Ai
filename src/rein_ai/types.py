@@ -1,4 +1,4 @@
-"""Core data structures for the Tripwire.
+"""Core data structures for the Rein.
 
 All dataclasses are JSON-serialisable via dataclasses.asdict() and reloadable
 via the ``from_dict`` classmethods. No external dependencies.
@@ -141,7 +141,7 @@ class AllowDecision:
 
 
 @dataclass
-class TripwireState:
+class ReinState:
     health: Dict[StrategyKey, StrategyHealth] = field(default_factory=dict)
     regime: Regime = field(default_factory=Regime.unknown)
     portfolio_pnl_today: float = 0.0
@@ -151,7 +151,7 @@ class TripwireState:
     version: int = 0
 
     @classmethod
-    def fresh(cls) -> "TripwireState":
+    def fresh(cls) -> "ReinState":
         return cls()
 
     def is_allowed(self, source: str, series: str) -> AllowDecision:
@@ -177,7 +177,7 @@ class TripwireState:
         }
 
     @classmethod
-    def from_dict(cls, d: dict) -> "TripwireState":
+    def from_dict(cls, d: dict) -> "ReinState":
         health: Dict[StrategyKey, StrategyHealth] = {}
         for k_str, v in d.get("health", {}).items():
             source, series = k_str.split("|", 1)

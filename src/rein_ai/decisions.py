@@ -1,21 +1,21 @@
 """Pure decision functions: status from scorecard, revival, regime override.
 
 These are pure functions — they take state, return new state. No I/O. No
-randomness. They are the heart of the Tripwire.
+randomness. They are the heart of the Rein.
 """
 from __future__ import annotations
 
 from typing import Optional
 
-from tripwire_ai.config import TripwireConfig
-from tripwire_ai.types import AxisScore, Regime, Scorecard, Status, StrategyHealth
+from rein_ai.config import ReinConfig
+from rein_ai.types import AxisScore, Regime, Scorecard, Status, StrategyHealth
 
 
 # ----------------------------------------------------------------------------
 # Status from Scorecard
 # ----------------------------------------------------------------------------
 
-def _edge_status(a: AxisScore, cfg: TripwireConfig) -> Status:
+def _edge_status(a: AxisScore, cfg: ReinConfig) -> Status:
     if a.samples < cfg.min_samples_for_kill:
         return Status.YELLOW  # cold-start cap
     if a.samples >= cfg.edge_black_min_samples and a.posterior_mean < cfg.edge_black_mean_cents:
@@ -29,7 +29,7 @@ def _edge_status(a: AxisScore, cfg: TripwireConfig) -> Status:
     return Status.YELLOW
 
 
-def _execution_status(a: AxisScore, cfg: TripwireConfig) -> Status:
+def _execution_status(a: AxisScore, cfg: ReinConfig) -> Status:
     if a.samples < cfg.min_samples_for_kill:
         return Status.YELLOW
     fill_rate = a.posterior_mean
@@ -48,7 +48,7 @@ def _execution_status(a: AxisScore, cfg: TripwireConfig) -> Status:
     return Status.YELLOW
 
 
-def _capital_status(a: AxisScore, cfg: TripwireConfig) -> Status:
+def _capital_status(a: AxisScore, cfg: ReinConfig) -> Status:
     if a.samples < cfg.min_samples_for_kill:
         return Status.YELLOW
     pct = a.posterior_mean
@@ -63,7 +63,7 @@ def _capital_status(a: AxisScore, cfg: TripwireConfig) -> Status:
     return Status.YELLOW
 
 
-def status_from_scorecard(sc: Scorecard, cfg: TripwireConfig) -> Status:
+def status_from_scorecard(sc: Scorecard, cfg: ReinConfig) -> Status:
     """Return the WORST status across the three axes."""
     return Status.worst(
         _edge_status(sc.edge, cfg),
@@ -76,7 +76,7 @@ def status_from_scorecard(sc: Scorecard, cfg: TripwireConfig) -> Status:
 # Anti-flap debounce
 # ----------------------------------------------------------------------------
 
-def can_change_status(sh: StrategyHealth, now: float, cfg: TripwireConfig) -> bool:
+def can_change_status(sh: StrategyHealth, now: float, cfg: ReinConfig) -> bool:
     """True iff sh.last_status_change is at least debounce_seconds in the past."""
     return (now - sh.last_status_change) >= cfg.debounce_seconds
 
@@ -90,7 +90,7 @@ def apply_status_change(
     new_status: Status,
     reason: str,
     now: float,
-    cfg: TripwireConfig,
+    cfg: ReinConfig,
 ) -> StrategyHealth:
     """Mutate sh in place to reflect a status change. Returns the same object."""
     old = sh.status
@@ -121,7 +121,7 @@ def revival_check(
     sh: StrategyHealth,
     proposed_status: Status,
     now: float,
-    cfg: TripwireConfig,
+    cfg: ReinConfig,
     regime_changed_since_kill: bool = False,
 ) -> Optional[Status]:
     """Return the status the strategy may transition to (possibly equal to current),
@@ -157,7 +157,7 @@ def revival_check(
 # Regime override
 # ----------------------------------------------------------------------------
 
-def regime_override(sh: StrategyHealth, current_regime: Regime, cfg: TripwireConfig) -> Status:
+def regime_override(sh: StrategyHealth, current_regime: Regime, cfg: ReinConfig) -> Status:
     """If the strategy's slice for the current regime is GREEN and global is YELLOW,
     promote effective status to GREEN. RED/BLACK are never overridden up.
     """

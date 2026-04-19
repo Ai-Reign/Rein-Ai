@@ -1,15 +1,15 @@
-"""Anthropic SDK adapter — auto-govern Claude tool calls with Tripwire.
+"""Anthropic SDK adapter — auto-govern Claude tool calls with Rein.
 
-Given a `Tripwire` instance and a dict of tool implementations, `GovernedToolRunner`
+Given a `Rein` instance and a dict of tool implementations, `GovernedToolRunner`
 wraps the tool-execution step: gate() checks, execution, fill recording — all in
 one call per tool_use block.
 
 Usage:
     import anthropic
-    from tripwire_ai import Tripwire
-    from tripwire_ai.adapters.anthropic import GovernedToolRunner
+    from rein_ai import Rein
+    from rein_ai.adapters.anthropic import GovernedToolRunner
 
-    brain = Tripwire(...)
+    brain = Rein(...)
     await brain.start()
 
     runner = GovernedToolRunner(
@@ -54,11 +54,11 @@ class ToolOutcome:
 
 
 class GovernedToolRunner:
-    """Wraps tool execution with Tripwire gate() + record_fill().
+    """Wraps tool execution with Rein gate() + record_fill().
 
     Parameters
     ----------
-    brain : Tripwire
+    brain : Rein
         The governance brain.
     source : str
         The `source` label for all strategies under this runner (e.g. "claude_agent").

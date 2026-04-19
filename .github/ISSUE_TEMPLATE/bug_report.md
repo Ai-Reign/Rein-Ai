@@ -15,7 +15,7 @@ A clear, one-paragraph description of the bug.
 Minimal code that triggers the issue:
 
 ```python
-from tripwire_ai import Tripwire, TripwireConfig
+from rein_ai import Rein, ReinConfig
 # ...
 ```
 
@@ -29,10 +29,10 @@ What actually happened. Include the full traceback if applicable.
 
 ## Environment
 
-- Tripwire version: (run `python -c "import tripwire_ai; print(tripwire_ai.__version__)"`)
+- Rein version: (run `python -c "import rein_ai; print(rein_ai.__version__)"`)
 - Python version:
 - OS:
-- Installed with: `pip install tripwire-ai` / editable / source
+- Installed with: `pip install rein-ai` / editable / source
 
 ## Additional context
 

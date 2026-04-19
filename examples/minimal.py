@@ -1,4 +1,4 @@
-"""Minimal Tripwire example — the shortest runnable demo.
+"""Minimal Rein example — the shortest runnable demo.
 
 Run:
     pip install -e .
@@ -6,11 +6,11 @@ Run:
 """
 import asyncio
 
-from tripwire_ai import Tripwire, TripwireConfig
+from rein_ai import Rein, ReinConfig
 
 
 async def main() -> None:
-    brain = Tripwire(cfg=TripwireConfig.from_env())
+    brain = Rein(cfg=ReinConfig.from_env())
     await brain.start()
     try:
         decision = brain.gate(source="agent", series="send_email")

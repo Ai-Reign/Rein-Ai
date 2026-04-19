@@ -1,10 +1,10 @@
-"""Tripwire as an LLM agent governor.
+"""Rein as an LLM agent governor.
 
 Problem: an autonomous Claude/GPT agent is taking expensive actions in a loop.
 You want to prevent runaway cost, bad-state spirals, and actions nobody
 can audit later.
 
-Tripwire treats each (tool, task) pair as a "strategy". The scorer learns
+Rein treats each (tool, task) pair as a "strategy". The scorer learns
 which tool+task combos are paying off (fills = successful completion,
 slippage = cost overrun vs estimate, pnl = task reward - token cost).
 
@@ -18,8 +18,8 @@ import random
 import time
 from pathlib import Path
 
-from tripwire_ai import Tripwire, TripwireConfig
-from tripwire_ai.regime import RegimeInputs
+from rein_ai import Rein, ReinConfig
+from rein_ai.regime import RegimeInputs
 
 
 # ---------- Domain adapter: an LLM agent ----------
@@ -67,9 +67,9 @@ class FakeLLMAgent:
 
 async def main():
     agent = FakeLLMAgent()
-    cfg = TripwireConfig.from_env(prefix="LLM_META_")
+    cfg = ReinConfig.from_env(prefix="LLM_META_")
     # Force shadow mode OFF so we actually see gate() blocking in the example
-    cfg = TripwireConfig(
+    cfg = ReinConfig(
         enabled=True,
         shadow_mode=False,
         min_samples_for_kill=5,
@@ -84,7 +84,7 @@ async def main():
     persist = Path("/tmp/meta_llm_example")
     persist.mkdir(parents=True, exist_ok=True)
 
-    brain = Tripwire(
+    brain = Rein(
         cfg=cfg,
         persist_dir=persist,
         regime_inputs_provider=agent.regime_inputs,
@@ -139,7 +139,7 @@ async def main():
         print(f"  {key:40s} status={health['status']:<6s}  reason={health.get('kill_reason') or '-'}")
 
     await brain.shutdown()
-    print(f"\nAudit log written to {persist / 'tripwire_audit.jsonl'}")
+    print(f"\nAudit log written to {persist / 'rein_audit.jsonl'}")
 
 
 if __name__ == "__main__":

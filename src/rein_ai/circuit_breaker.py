@@ -1,6 +1,6 @@
 """Independent portfolio circuit breaker.
 
-CRITICAL: this module must NEVER import tripwire_ai.types or any module that
+CRITICAL: this module must NEVER import rein_ai.types or any module that
 depends on brain state types. It's the redundant safety system — it must work
 even if the rest of the brain is broken or deserialised garbage.
 """
@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from tripwire_ai.config import TripwireConfig
+from rein_ai.config import ReinConfig
 
 
 @dataclass
@@ -22,7 +22,7 @@ def evaluate_circuit_breaker(
     starting_balance_usd: float,
     current_balance_usd: float,
     realized_pnl_today: float,
-    cfg: TripwireConfig,
+    cfg: ReinConfig,
 ) -> CircuitBreakerVerdict:
     """Pure function. Returns whether to halt new orders and whether to cancel
     open orders. No I/O, no global state.

@@ -1,6 +1,6 @@
 # Security Policy
 
-Tripwire is a security/governance library. Vulnerabilities in Tripwire can put every downstream user at risk.
+Rein is a security/governance library. Vulnerabilities in Rein can put every downstream user at risk.
 
 ## Reporting a vulnerability
 
@@ -10,7 +10,7 @@ Email **firekicks@gmail.com** with:
 
 - A description of the vulnerability
 - Steps to reproduce
-- The Tripwire version affected
+- The Rein version affected
 - Any proof-of-concept code (optional but helpful)
 - Your preferred disclosure timeline
 
@@ -20,17 +20,17 @@ You should receive an acknowledgment within **72 hours**. We aim to publish a fi
 
 **In scope:**
 
-- Authentication or authorization bypass in `/tripwire/*` admin endpoints
+- Authentication or authorization bypass in `/rein/*` admin endpoints
 - Audit-log tampering or integrity bypass
 - Gate-decision bypass (causing `gate()` to return `allowed=True` when it should not)
 - Rate-limiter or circuit-breaker bypass
 - Information disclosure (state file, audit log, or config)
-- Dependency vulnerabilities that materially affect Tripwire's security guarantees
+- Dependency vulnerabilities that materially affect Rein's security guarantees
 
 **Out of scope:**
 
-- Denial of service against your own Tripwire instance (you control your rate limits)
-- Issues requiring privileged access to the machine running Tripwire
+- Denial of service against your own Rein instance (you control your rate limits)
+- Issues requiring privileged access to the machine running Rein
 - Social engineering
 
 ## Coordinated disclosure

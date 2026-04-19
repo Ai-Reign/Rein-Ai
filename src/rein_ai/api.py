@@ -1,4 +1,4 @@
-"""FastAPI router exposing /tripwire/* endpoints.
+"""FastAPI router exposing /rein/* endpoints.
 
 Security model:
     Read endpoints require `reader` role (or higher).
@@ -7,7 +7,7 @@ Security model:
 
 When no auth is configured (META_AUTH_TOKENS / META_AUTH_CERT_ROLES unset), all
 endpoints run in "open" mode for backwards compat with localhost-only
-deployments. See tripwire_ai.auth for the configuration contract.
+deployments. See rein_ai.auth for the configuration contract.
 """
 from __future__ import annotations
 
@@ -17,10 +17,10 @@ from dataclasses import asdict
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 
-from tripwire_ai.auth import AuthContext, get_auth_context, require_role
-from tripwire_ai.brain import Tripwire
-from tripwire_ai.persist import load_recent_audit
-from tripwire_ai.types import Status
+from rein_ai.auth import AuthContext, get_auth_context, require_role
+from rein_ai.brain import Rein
+from rein_ai.persist import load_recent_audit
+from rein_ai.types import Status
 
 
 class ReviveBody(BaseModel):
@@ -45,8 +45,8 @@ class OverrideBody(BaseModel):
     ttl_seconds: float = 0.0
 
 
-def build_router(brain: Tripwire) -> APIRouter:
-    router = APIRouter(prefix="/tripwire", tags=["tripwire"])
+def build_router(brain: Rein) -> APIRouter:
+    router = APIRouter(prefix="/rein", tags=["rein"])
 
     _reader = Depends(require_role("reader"))
     _operator = Depends(require_role("operator"))

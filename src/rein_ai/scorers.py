@@ -1,4 +1,4 @@
-"""Pure-Python Bayesian scorers for the Tripwire.
+"""Pure-Python Bayesian scorers for the Rein.
 
 No external dependencies. Uses ``math.erf`` for normal CDF and a
 continued-fraction expansion of the regularized incomplete beta function for

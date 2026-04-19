@@ -16,7 +16,7 @@ from pathlib import Path
 
 import pytest
 
-from tripwire_ai.secure_audit import (
+from rein_ai.secure_audit import (
     AuditIntegrityError, GENESIS_HASH, KEY_ENV_VAR,
     append_signed, iter_entries, verify_chain,
 )

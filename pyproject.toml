@@ -3,7 +3,7 @@ requires = ["setuptools>=61", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "tripwire-ai"
+name = "rein-ai"
 version = "0.1.0"
 description = "Governance layer for autonomous agents: regime detection, circuit breakers, strategy scoring, audit trail"
 readme = "README.md"
@@ -39,20 +39,20 @@ dependencies = []
 [project.optional-dependencies]
 api  = ["fastapi>=0.100", "pydantic>=2.0"]
 test = ["pytest>=7.0", "pytest-asyncio>=0.21"]
-dev  = ["tripwire-ai[api,test]"]
+dev  = ["rein-ai[api,test]"]
 
 [project.scripts]
-tripwire = "tripwire_ai.cli:main"
+rein = "rein_ai.cli:main"
 
 [project.urls]
-Homepage = "https://github.com/tripwire-ai/tripwire-ai"
-Issues   = "https://github.com/tripwire-ai/tripwire-ai/issues"
+Homepage = "https://github.com/rein-ai/rein-ai"
+Issues   = "https://github.com/rein-ai/rein-ai/issues"
 
 [tool.setuptools.packages.find]
 where = ["src"]
 
 [tool.setuptools.package-data]
-tripwire_ai = ["py.typed"]
+rein_ai = ["py.typed"]
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"

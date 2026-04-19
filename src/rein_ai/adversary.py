@@ -1,6 +1,6 @@
 """Adversarial agent simulator (red team).
 
-Runs a battery of synthetic attack scenarios against a configured Tripwire
+Runs a battery of synthetic attack scenarios against a configured Rein
 and reports which ones the governance config catches.
 
 Attack patterns are inspired by real failure modes seen in production agent

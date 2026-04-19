@@ -1,4 +1,4 @@
-"""Real Claude agent governed by Tripwire — v2, using the Anthropic adapter.
+"""Real Claude agent governed by Rein — v2, using the Anthropic adapter.
 
 Same demo as `real_claude_governor.py` but uses `GovernedToolRunner` so the
 gate-and-record ceremony collapses from ~15 lines per tool to 1.
@@ -17,9 +17,9 @@ from pathlib import Path
 
 import anthropic
 
-from tripwire_ai import Tripwire, TripwireConfig
-from tripwire_ai.adapters.anthropic import GovernedToolRunner
-from tripwire_ai.regime import RegimeInputs
+from rein_ai import Rein, ReinConfig
+from rein_ai.adapters.anthropic import GovernedToolRunner
+from rein_ai.regime import RegimeInputs
 
 
 def _load_env():
@@ -79,7 +79,7 @@ TASKS = [
     "Translate 'thank you' to German.",
     "Reverse 'governor'.",
     "Translate 'goodbye' to Italian.",
-    "Count the words in: 'Tripwire watches every action.'",
+    "Count the words in: 'Rein watches every action.'",
     "Translate 'yes' to Japanese.",
     "What is 99 + 1?",
     "Translate 'no' to Mandarin.",
@@ -106,7 +106,7 @@ async def main():
         print("ERROR: ANTHROPIC_API_KEY not set")
         return
 
-    cfg = TripwireConfig(
+    cfg = ReinConfig(
         enabled=True, shadow_mode=False,
         min_samples_for_kill=4, min_samples_for_green=3,
         exec_yellow_fill=0.80, exec_red_fill=0.50, exec_black_fill=0.30,
@@ -118,7 +118,7 @@ async def main():
             f.unlink()
     persist.mkdir(parents=True, exist_ok=True)
 
-    brain = Tripwire(cfg=cfg, persist_dir=persist,
+    brain = Rein(cfg=cfg, persist_dir=persist,
                       regime_inputs_provider=regime_inputs_provider)
     await brain.start()
 

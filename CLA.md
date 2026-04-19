@@ -1,6 +1,6 @@
 # Contributor License Agreement (CLA)
 
-Thank you for your interest in contributing to Tripwire ("the Project"), maintained by John N.W. Hampton Jr ("the Maintainer").
+Thank you for your interest in contributing to Rein ("the Project"), maintained by John N.W. Hampton Jr ("the Maintainer").
 
 By submitting a contribution (code, documentation, or other materials) to this Project, you agree to the following terms.
 

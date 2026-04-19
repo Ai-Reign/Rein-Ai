@@ -1,8 +1,8 @@
-"""Tests for tripwire_ai.scorers: Bayesian posterior math."""
+"""Tests for rein_ai.scorers: Bayesian posterior math."""
 import math
 import pytest
 
-from tripwire_ai.scorers import (
+from rein_ai.scorers import (
     normal_cdf,
     welford_update,
     welford_init,
@@ -11,7 +11,7 @@ from tripwire_ai.scorers import (
     update_normal_axis,
     normal_p_below_threshold,
 )
-from tripwire_ai.types import AxisScore
+from rein_ai.types import AxisScore
 
 
 # --- normal_cdf ---

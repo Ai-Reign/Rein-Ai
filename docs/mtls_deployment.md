@@ -1,16 +1,16 @@
 # mTLS Deployment Guide
 
-Tripwire's admin API supports mTLS (mutual TLS) client authentication via a
+Rein's admin API supports mTLS (mutual TLS) client authentication via a
 **reverse proxy** (nginx, Envoy, Traefik, Caddy). The proxy terminates TLS,
 verifies the client certificate against a trusted CA, and forwards the cert's
-subject in a trusted header. Tripwire's app code never touches raw
+subject in a trusted header. Rein's app code never touches raw
 certificates — that keeps the trust boundary in the proxy layer where it
 belongs (standard SOC 2 / ISO 27001 practice).
 
 ## Architecture
 
 ```
-   Client                       Reverse Proxy             Tripwire API
+   Client                       Reverse Proxy             Rein API
    ──────                       (nginx/Envoy)             (FastAPI)
       │                              │                         │
       │  TLS handshake + client cert │                         │
@@ -33,11 +33,11 @@ belongs (standard SOC 2 / ISO 27001 practice).
 # CA (keep ca.key OFFLINE — anyone with it can mint operator creds)
 openssl req -x509 -newkey rsa:4096 -sha256 -days 3650 -nodes \
     -keyout ca.key -out ca.crt \
-    -subj "/CN=Tripwire Ops CA/O=YourOrg"
+    -subj "/CN=Rein Ops CA/O=YourOrg"
 
-# Server cert for Tripwire
+# Server cert for Rein
 openssl req -newkey rsa:2048 -nodes -keyout server.key \
-    -out server.csr -subj "/CN=tripwire.internal"
+    -out server.csr -subj "/CN=rein.internal"
 openssl x509 -req -in server.csr -days 365 -sha256 \
     -CA ca.crt -CAkey ca.key -CAcreateserial \
     -out server.crt
@@ -55,24 +55,24 @@ openssl x509 -req -in ops-alice.csr -days 365 -sha256 \
 ```nginx
 server {
     listen 443 ssl;
-    server_name tripwire.internal;
+    server_name rein.internal;
 
-    ssl_certificate     /etc/ssl/tripwire/server.crt;
-    ssl_certificate_key /etc/ssl/tripwire/server.key;
+    ssl_certificate     /etc/ssl/rein/server.crt;
+    ssl_certificate_key /etc/ssl/rein/server.key;
 
-    ssl_client_certificate /etc/ssl/tripwire/ca.crt;
+    ssl_client_certificate /etc/ssl/rein/ca.crt;
     ssl_verify_client on;               # REQUIRE client cert
     ssl_verify_depth  2;
 
     ssl_protocols       TLSv1.2 TLSv1.3;
     ssl_ciphers         HIGH:!aNULL:!MD5;
 
-    location /tripwire/ {
+    location /rein/ {
         proxy_pass http://127.0.0.1:8080;
         proxy_set_header Host                  $host;
         proxy_set_header X-Real-IP             $remote_addr;
 
-        # THIS is what Tripwire uses for auth
+        # THIS is what Rein uses for auth
         proxy_set_header X-Client-Cert-Subject $ssl_client_s_dn;
 
         # Strip any forged header from upstream client
@@ -82,11 +82,11 @@ server {
 ```
 
 **Critical:** The `ssl_verify_client on` line means nginx rejects any request
-without a valid client cert before it ever reaches Tripwire. The header
+without a valid client cert before it ever reaches Rein. The header
 forwarding is safe because clients cannot set `X-Client-Cert-Subject`
 themselves — nginx overwrites whatever they send.
 
-## Step 3 — Configure Tripwire role mapping
+## Step 3 — Configure Rein role mapping
 
 ```bash
 export META_AUTH_CERT_ROLES='{
@@ -101,7 +101,7 @@ The subject string must match nginx's `$ssl_client_s_dn` exactly. Test with:
 ```bash
 # On the nginx box:
 curl -s --cert ops-alice.crt --key ops-alice.key --cacert ca.crt \
-    https://tripwire.internal/tripwire/whoami
+    https://rein.internal/rein/whoami
 # Expected: {"subject": "cert:CN=alice,OU=ops,O=YourOrg", ...}
 ```
 
@@ -113,7 +113,7 @@ OCSP stapling. Simplest: generate a CRL and reload nginx:
 ```bash
 openssl ca -gencrl -out crl.pem -config openssl.cnf
 # Update nginx:
-ssl_crl /etc/ssl/tripwire/crl.pem;
+ssl_crl /etc/ssl/rein/crl.pem;
 ```
 
 Also remove the cert's subject from `META_AUTH_CERT_ROLES` as a defense-in-depth.
@@ -136,7 +136,7 @@ export META_AUTH_TOKENS='{"tok_ci_xxx": ["reader"]}'
 ```
 
 Bearer takes precedence over mTLS if both are present on a single request.
-`/tripwire/whoami` reports which was used.
+`/rein/whoami` reports which was used.
 
 ## Audit trail
 

@@ -1,13 +1,13 @@
-"""Replay: run a recorded audit log through a fresh Tripwire under a new
-TripwireConfig. Answers: 'if I tighten edge_red_p to 0.70, how many more strategies
+"""Replay: run a recorded audit log through a fresh Rein under a new
+ReinConfig. Answers: 'if I tighten edge_red_p to 0.70, how many more strategies
 get killed? Any that would have worked net-positive?'
 
 Usage:
-    from tripwire_ai import TripwireConfig
-    from tripwire_ai.replay import replay_audit
-    baseline = TripwireConfig()
-    aggressive = TripwireConfig(edge_red_p=0.70, exec_red_fill=0.60)
-    result = await replay_audit("./tripwire_state/tripwire_audit.jsonl", aggressive)
+    from rein_ai import ReinConfig
+    from rein_ai.replay import replay_audit
+    baseline = ReinConfig()
+    aggressive = ReinConfig(edge_red_p=0.70, exec_red_fill=0.60)
+    result = await replay_audit("./rein_state/rein_audit.jsonl", aggressive)
     print(result.summary())
 """
 from __future__ import annotations
@@ -18,12 +18,12 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Dict, List, Optional
 
-from tripwire_ai import Tripwire, TripwireConfig
+from rein_ai import Rein, ReinConfig
 
 
 @dataclass
 class ReplayResult:
-    config: TripwireConfig
+    config: ReinConfig
     total_events: int
     fill_events: int
     exit_events: int
@@ -49,12 +49,12 @@ class ReplayResult:
 
 async def replay_audit(
     audit_path: str | Path,
-    cfg: TripwireConfig,
+    cfg: ReinConfig,
     persist_dir: Optional[Path] = None,
 ) -> ReplayResult:
     """Replay an audit log file under `cfg`. Returns aggregated results.
 
-    The audit log is the .jsonl written by Tripwire during live operation.
+    The audit log is the .jsonl written by Rein during live operation.
     We replay FILL and EXIT events in order; REGIME and STATUS events are
     reconstructed by the replayed brain.
     """
@@ -65,10 +65,10 @@ async def replay_audit(
     persist_dir = persist_dir or Path(tempfile.mkdtemp(prefix="meta_replay_"))
 
     # Disable shadow so kills are real in replay
-    cfg_active = TripwireConfig(**{**cfg.__dict__, "shadow_mode": False,
+    cfg_active = ReinConfig(**{**cfg.__dict__, "shadow_mode": False,
                                 "debounce_seconds": 0.0})
 
-    brain = Tripwire(cfg=cfg_active, persist_dir=persist_dir)
+    brain = Rein(cfg=cfg_active, persist_dir=persist_dir)
     await brain.start()
 
     result = ReplayResult(config=cfg, total_events=0, fill_events=0, exit_events=0)
@@ -116,7 +116,7 @@ async def replay_audit(
 
 
 async def compare_configs(audit_path: str | Path,
-                          configs: Dict[str, TripwireConfig]) -> Dict[str, ReplayResult]:
+                          configs: Dict[str, ReinConfig]) -> Dict[str, ReplayResult]:
     """Replay the same audit log under multiple configs. Returns {name: result}."""
     out = {}
     for name, cfg in configs.items():

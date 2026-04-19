@@ -13,22 +13,22 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Deque, Dict, Optional, Tuple
 
-from tripwire_ai.config import TripwireConfig
-from tripwire_ai.decisions import (
+from rein_ai.config import ReinConfig
+from rein_ai.decisions import (
     apply_status_change, can_change_status, regime_override,
     revival_check, status_from_scorecard,
 )
-from tripwire_ai.persist import append_audit
-from tripwire_ai.scorers import (
+from rein_ai.persist import append_audit
+from rein_ai.scorers import (
     beta_p_below_threshold, normal_p_below_threshold,
     update_beta_binomial, welford_init, welford_update,
 )
-from tripwire_ai.types import (
-    AxisScore, TripwireState, Regime, Scorecard, Status, StrategyHealth, StrategyKey,
+from rein_ai.types import (
+    AxisScore, ReinState, Regime, Scorecard, Status, StrategyHealth, StrategyKey,
 )
 
 
-log = logging.getLogger("tripwire.scorer")
+log = logging.getLogger("rein.scorer")
 
 
 @dataclass
@@ -61,14 +61,14 @@ class _RawObs:
 
 
 class StrategyScorer:
-    """Update TripwireState in place from observed events. No internal persistence —
-    the caller (Tripwire) owns saving state.
+    """Update ReinState in place from observed events. No internal persistence —
+    the caller (Rein) owns saving state.
     """
 
     def __init__(
         self,
-        cfg: TripwireConfig,
-        state: TripwireState,
+        cfg: ReinConfig,
+        state: ReinState,
         audit_path: Optional[Path] = None,
         debounce_override_for_tests: Optional[float] = None,
     ):

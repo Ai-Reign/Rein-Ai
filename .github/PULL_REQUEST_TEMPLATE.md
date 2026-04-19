@@ -14,7 +14,7 @@ What problem does it solve? Link the issue: `Fixes #...`
 
 - [ ] Added / updated unit tests
 - [ ] `pytest` passes locally (130+ tests)
-- [ ] CLI smoke test (`tripwire --help`) works
+- [ ] CLI smoke test (`rein --help`) works
 
 ## Breaking changes
 

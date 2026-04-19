@@ -1,9 +1,9 @@
-"""Tripwire command-line interface.
+"""Rein command-line interface.
 
 Subcommands:
-    tripwire compile  --policy POLICY.{yaml,txt}      # show what a policy expands to
-    tripwire redteam  --policy POLICY.{yaml,txt}      # red-team an English policy
-    tripwire attacks                                  # list registered attacks
+    rein compile  --policy POLICY.{yaml,txt}      # show what a policy expands to
+    rein redteam  --policy POLICY.{yaml,txt}      # red-team an English policy
+    rein attacks                                  # list registered attacks
 
 Policy file formats:
     .yaml / .yml  — top-level list under key 'policy:' OR a top-level YAML list
@@ -49,7 +49,7 @@ def _load_policy(path: Path) -> List[str]:
 
 
 def _cmd_compile(args: argparse.Namespace) -> int:
-    from tripwire_ai import compile_policy
+    from rein_ai import compile_policy
     rules = _load_policy(Path(args.policy))
     policy = compile_policy(rules, use_llm_fallback=args.llm_fallback)
     if args.json:
@@ -68,14 +68,14 @@ def _cmd_compile(args: argparse.Namespace) -> int:
 
 
 async def _run_redteam(args: argparse.Namespace) -> int:
-    from tripwire_ai import compile_policy, list_attacks, run_red_team
-    from tripwire_ai.brain import Tripwire
+    from rein_ai import compile_policy, list_attacks, run_red_team
+    from rein_ai.brain import Rein
 
     rules = _load_policy(Path(args.policy))
     policy = compile_policy(rules, use_llm_fallback=args.llm_fallback)
 
     with tempfile.TemporaryDirectory() as td:
-        brain = Tripwire(
+        brain = Rein(
             cfg=replace(policy.config, shadow_mode=False),
             persist_dir=Path(td),
             rate_limiter=policy.rate_limiter,
@@ -106,14 +106,14 @@ def _cmd_redteam(args: argparse.Namespace) -> int:
 
 
 def _cmd_attacks(args: argparse.Namespace) -> int:
-    from tripwire_ai import list_attacks
+    from rein_ai import list_attacks
     for n in list_attacks():
         print(n)
     return 0
 
 
 def build_parser() -> argparse.ArgumentParser:
-    p = argparse.ArgumentParser(prog="tripwire", description="Tripwire CLI")
+    p = argparse.ArgumentParser(prog="rein", description="Rein CLI")
     sub = p.add_subparsers(dest="cmd", required=True)
 
     pc = sub.add_parser("compile", help="compile a policy file and print the result")
@@ -126,7 +126,7 @@ def build_parser() -> argparse.ArgumentParser:
     pr = sub.add_parser("redteam", help="run adversarial simulator against a policy")
     pr.add_argument("--policy", required=True)
     pr.add_argument("--attacks", default=None,
-                    help="comma-separated attacks (default: all). See `tripwire attacks`")
+                    help="comma-separated attacks (default: all). See `rein attacks`")
     pr.add_argument("--min-catch-rate", type=float, default=1.0,
                     help="exit non-zero if catch rate falls below this (default 1.0)")
     pr.add_argument("--json", action="store_true")
