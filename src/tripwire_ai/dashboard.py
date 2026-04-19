@@ -3,7 +3,7 @@
 Zero frontend build — single HTML page polls a small JSON endpoint.
 
 Usage:
-    python3 -m tripwire_ai.dashboard --persist-dir ./meta_state --port 8765
+    python3 -m tripwire_ai.dashboard --persist-dir ./tripwire_state --port 8765
     open http://localhost:8765
 """
 from __future__ import annotations
@@ -144,7 +144,7 @@ def serve(persist_dir: Path, port: int = 8765):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--persist-dir", default="meta_state")
+    ap.add_argument("--persist-dir", default="tripwire_state")
     ap.add_argument("--port", type=int, default=8765)
     args = ap.parse_args()
     serve(Path(args.persist_dir), args.port)

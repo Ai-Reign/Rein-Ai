@@ -7,7 +7,7 @@ Usage:
     from tripwire_ai.replay import replay_audit
     baseline = TripwireConfig()
     aggressive = TripwireConfig(edge_red_p=0.70, exec_red_fill=0.60)
-    result = await replay_audit("./meta_state/tripwire_audit.jsonl", aggressive)
+    result = await replay_audit("./tripwire_state/tripwire_audit.jsonl", aggressive)
     print(result.summary())
 """
 from __future__ import annotations
