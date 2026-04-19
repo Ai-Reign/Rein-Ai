@@ -86,4 +86,4 @@ The version released under AGPL-3.0 stays AGPL-3.0 forever. Future versions may 
 
 ---
 
-Copyright © 2026 John Hampton. All rights reserved.
+Copyright © 2026 John N.W. Hampton Jr. All rights reserved.

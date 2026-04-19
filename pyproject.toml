@@ -9,16 +9,30 @@ description = "Governance layer for autonomous agents: regime detection, circuit
 readme = "README.md"
 requires-python = ">=3.10"
 license = {text = "AGPL-3.0-or-later"}
-authors = [{name = "John Hampton", email = "firekicks@gmail.com"}]
+authors = [{name = "John N.W. Hampton Jr", email = "firekicks@gmail.com"}]
 keywords = ["agent", "governance", "risk", "llm", "trading", "circuit-breaker", "audit"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)",
+    "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3 :: Only",
     "Intended Audience :: Developers",
+    "Intended Audience :: System Administrators",
+    "Intended Audience :: Financial and Insurance Industry",
+    "Intended Audience :: Information Technology",
     "Topic :: Software Development :: Libraries",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Security",
+    "Topic :: System :: Monitoring",
+    "Topic :: Office/Business :: Financial :: Investment",
+    "Operating System :: OS Independent",
+    "Typing :: Typed",
+    "Framework :: AsyncIO",
+    "Framework :: FastAPI",
 ]
 dependencies = []
 

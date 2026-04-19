@@ -189,6 +189,7 @@ Full list in `src/tripwire_ai/config.py`.
 
 - **130 tests**, all passing
 - **Running in production** (Predbot trading bot, since 2026-04-16)
+- **Low overhead** — `gate()` mean **1.5 μs**, p99 **2.6 μs**, **550k+ calls/sec** on a single core (see `scripts/bench.py`)
 - **Shadow-mode protocol** recommended before enforcement — see `docs/shadow-protocol.md`
 
 ---
@@ -217,3 +218,8 @@ Tripwire and content-guardrail libraries are complementary: use Guardrails/NeMo 
 - **Commercial License** (see [`COMMERCIAL-LICENSE.md`](COMMERCIAL-LICENSE.md)) for proprietary / SaaS use without copyleft obligations. Contact **firekicks@gmail.com** for a quote.
 
 Contributors: see [`CLA.md`](CLA.md).
+
+---
+
+Created and maintained by **John N.W. Hampton Jr** (<firekicks@gmail.com>).
+Copyright © 2026 John N.W. Hampton Jr.
