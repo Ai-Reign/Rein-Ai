@@ -66,7 +66,7 @@ async def main():
         ticker="msg-123", filled=True,
         slippage_cents=0.0, attempt_at=time.time(),
     )
-    await brain.stop()
+    await brain.shutdown()
 
 asyncio.run(main())
 ```
@@ -177,8 +177,9 @@ Key vars:
 |---|---|---|
 | `TRIPWIRE_ENABLED` | `true` | Master on/off |
 | `TRIPWIRE_SHADOW` | `true` | Observe without blocking (safe default) |
-| `TRIPWIRE_EDGE_RED_P` | `0.2` | Probability threshold for killing a strategy |
-| `TRIPWIRE_PERSIST_DIR` | `./state` | Where state snapshots live |
+| `TRIPWIRE_EDGE_RED_P` | `0.85` | Edge-axis probability threshold for RED status |
+| `TRIPWIRE_PORTFOLIO_FLOOR_PCT` | `-0.05` | Drawdown % that halts the portfolio |
+| `TRIPWIRE_REGIME_TICK_SECONDS` | `30.0` | How often the regime detector polls |
 
 Full list in `src/tripwire_ai/config.py`.
 
