@@ -24,7 +24,8 @@ htmlcov/
 coverage.xml
 *.cover
 
-# Tripwire runtime state
+# Rein runtime state
+rein_state/
 tripwire_state/
 meta_state/
 *.jsonl
