@@ -45,8 +45,8 @@ dev  = ["rein-ai[api,test]"]
 rein = "rein_ai.cli:main"
 
 [project.urls]
-Homepage = "https://github.com/rein-ai/rein-ai"
-Issues   = "https://github.com/rein-ai/rein-ai/issues"
+Homepage = "https://github.com/Ai-Rein/rein-ai"
+Issues   = "https://github.com/Ai-Rein/rein-ai/issues"
 
 [tool.setuptools.packages.find]
 where = ["src"]

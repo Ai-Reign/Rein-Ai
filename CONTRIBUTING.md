@@ -11,7 +11,7 @@ Thanks for your interest. Rein is a governance library — correctness and audit
 ## Development setup
 
 ```bash
-git clone https://github.com/rein-ai/rein-ai
+git clone https://github.com/Ai-Rein/rein-ai
 cd rein-ai
 python3 -m venv .venv && source .venv/bin/activate
 pip install -e ".[api,test]"
