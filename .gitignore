@@ -45,6 +45,7 @@ meta_state/
 *.key
 secrets.json
 
-# Private notes (never commit tuned params)
+# Private notes (never commit tuned params or launch drafts)
 notes/
 *.private.md
+LAUNCH.md
