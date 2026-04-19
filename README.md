@@ -130,6 +130,43 @@ Full runnable demo: `examples/policy_and_redteam/demo.py`.
 
 ## How it works
 
+```
+         ┌─────────────────────────────────────────────────────────┐
+         │                    Your Agent / App                     │
+         │   (LLM tool call, trade, email, scraper, RPA step…)     │
+         └───────────────────────────┬─────────────────────────────┘
+                                     │  brain.gate(source, series)
+                                     ▼
+         ┌─────────────────────────────────────────────────────────┐
+         │                        Tripwire                         │
+         │                                                         │
+         │  ┌─────────────┐  ┌─────────────┐  ┌────────────────┐   │
+         │  │  Regime     │  │  Strategy   │  │   Rate         │   │
+         │  │  Detector   │→ │  Scorer     │  │   Limiter      │   │
+         │  │ normal/     │  │  Bayesian,  │  │   token-bucket │   │
+         │  │ stress/     │  │  time-decay │  │   per caller   │   │
+         │  │ shock       │  │             │  │                │   │
+         │  └─────────────┘  └─────────────┘  └────────────────┘   │
+         │         │                 │                 │           │
+         │         ▼                 ▼                 ▼           │
+         │  ┌───────────────────────────────────────────────────┐  │
+         │  │              Decision Engine                      │  │
+         │  │   GREEN (allow) · YELLOW (shadow) · RED (block)   │  │
+         │  └───────────────────────────┬───────────────────────┘  │
+         │                              │                          │
+         │  ┌─────────────┐  ┌──────────▼──────────┐  ┌──────────┐ │
+         │  │  Circuit    │  │   Anomaly           │  │  Audit   │ │
+         │  │  Breaker    │  │   Detector          │  │  Log     │ │
+         │  │ drawdown/   │  │ deny-storm,         │  │ JSONL    │ │
+         │  │ error-rate/ │  │ enumeration,        │  │ hash-    │ │
+         │  │ staleness   │  │ runaway callers     │  │ linked   │ │
+         │  └─────────────┘  └─────────────────────┘  └──────────┘ │
+         └───────────────────────────┬─────────────────────────────┘
+                                     │  AllowDecision(allowed, reason)
+                                     ▼
+                         Execute action  /  Halt  /  Log
+```
+
 | Subsystem | Job |
 |---|---|
 | `RegimeDetector` | Classifies state of the world (normal / stressed / shock) from live signals |
