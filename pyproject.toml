@@ -38,7 +38,7 @@ dependencies = []
 
 [project.optional-dependencies]
 api  = ["fastapi>=0.100", "pydantic>=2.0"]
-test = ["pytest>=7.0", "pytest-asyncio>=0.21"]
+test = ["pytest>=7.0", "pytest-asyncio>=0.21", "httpx>=0.24"]
 dev  = ["rein-ai[api,test]"]
 
 [project.scripts]
