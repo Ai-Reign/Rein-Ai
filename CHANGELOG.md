@@ -30,3 +30,4 @@ Initial public release.
 ### Production lineage
 - Extracted from a production Kalshi trading bot (live since 2026-04-16).
 - Prevented 12 runaway trades in first week of live shadow mode.
+
