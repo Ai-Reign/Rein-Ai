@@ -1,0 +1,25 @@
+# Rein-AI code ownership
+# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+#
+# The listed owners are automatically requested as reviewers for PRs touching
+# the matched paths. Combined with branch protection, this enforces a paper
+# trail for trade-secret and CLA purposes.
+
+# Default owner — everything not otherwise matched
+*                                   @Ai-Rein
+
+# Licensing and legal — any change requires explicit review
+LICENSE                             @Ai-Rein
+COMMERCIAL-LICENSE.md               @Ai-Rein
+CLA.md                              @Ai-Rein
+SECURITY.md                         @Ai-Rein
+CODE_OF_CONDUCT.md                  @Ai-Rein
+
+# Core runtime — changes affect governance correctness
+/src/rein_ai/brain.py               @Ai-Rein
+/src/rein_ai/config.py              @Ai-Rein
+/src/rein_ai/regime.py              @Ai-Rein
+
+# Build & release
+/pyproject.toml                     @Ai-Rein
+/.github/                           @Ai-Rein

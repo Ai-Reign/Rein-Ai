@@ -55,6 +55,26 @@ Enterprise and OEM tiers include:
 - Rights to the Rein trademark or logo (separate trademark agreement required)
 - Patent rights beyond those required to use Rein itself
 - Resale of Rein as a standalone product (OEM tier required)
+- Access to Rein-AI Pro or other trade-secret-protected material (separate NDA + Pro subscription required)
+
+---
+
+## Confidentiality
+
+In connection with this license, Rein-AI LLC ("Licensor") may disclose non-public information to the licensee ("You"), including but not limited to implementation details, tuning guidance, roadmap information, pricing concessions, and materials shared during support or integration engagements ("Confidential Information").
+
+You agree to:
+
+1. use Confidential Information solely for your authorized use of Rein under this license;
+2. protect Confidential Information with at least the degree of care you use to protect your own most sensitive information, and in no event less than a reasonable degree of care;
+3. not disclose Confidential Information to third parties without Licensor's prior written consent, except to your employees and contractors under equivalent confidentiality obligations and with a need to know;
+4. not use Confidential Information to develop a competing product or service.
+
+Confidential Information does not include information that is or becomes publicly available through no breach by You, was in Your possession before disclosure without obligation of confidentiality, is independently developed without use of Confidential Information, or is required to be disclosed by law (with prompt notice to Licensor where lawful).
+
+Licensor's open-source software released under AGPL-3.0 is not Confidential Information. Trade secrets of Licensor (including Pro-tier materials, extended attack library, calibration parameters, and trained models) remain confidential indefinitely while they continue to meet the definition of trade secret under applicable law.
+
+This confidentiality obligation survives termination of this license for **five (5) years** for general Confidential Information, and **for so long as the information remains a trade secret** under the Defend Trade Secrets Act (18 U.S.C. § 1836) and applicable state law for trade-secret material.
 
 ---
 
