@@ -224,9 +224,9 @@ Full list in `src/rein_ai/config.py`.
 
 ## Status
 
-- **130 tests**, all passing
+- **135 tests**, all passing
 - **Running in production** (Predbot trading bot, since 2026-04-16)
-- **Low overhead** — `gate()` mean **1.5 μs**, p99 **2.6 μs**, **550k+ calls/sec** on a single core (see `scripts/bench.py`)
+- **Low overhead** — `gate()` mean **1.7 μs**, p99 **2.7 μs**, **500k+ calls/sec** on a single core (see `scripts/bench.py`; 2021 MacBook Pro, Python 3.14)
 - **Shadow-mode protocol** recommended before enforcement — see `docs/shadow-protocol.md`
 
 ---

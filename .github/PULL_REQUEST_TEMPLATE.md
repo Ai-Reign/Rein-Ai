@@ -13,7 +13,7 @@ What problem does it solve? Link the issue: `Fixes #...`
 ## Tests
 
 - [ ] Added / updated unit tests
-- [ ] `pytest` passes locally (130+ tests)
+- [ ] `pytest` passes locally (135+ tests)
 - [ ] CLI smoke test (`rein --help`) works
 
 ## Breaking changes
