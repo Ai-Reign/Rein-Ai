@@ -23,7 +23,7 @@ First public release. Project renamed from Tripwire to **Rein-AI** after tradema
 ### Changed
 - **Project name: Tripwire → Rein-AI** (trademark research documented in `~/rein-ai-legal/`).
 - Package identity: PyPI `rein-ai`, import `rein_ai`, class `Rein`, config `ReinConfig`, CLI `rein`, env prefix `REIN_`, HTTP prefix `/rein/*`, log prefix `[REIN]`, state dir `rein_state/`.
-- Contact addresses moved to role-based `rein-ai.com` forwarders: `licensing@`, `security@`, `conduct@`, `john@`.
+- Contact addresses moved to role-based `reinai.io` forwarders: `licensing@`, `security@`, `conduct@`, `john@`.
 - Repo URLs point at `github.com/Ai-Reign/Rein-Ai`.
 
 ### Performance (benchmarked on 2021 MacBook Pro, Python 3.14)

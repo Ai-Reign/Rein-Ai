@@ -1,11 +1,11 @@
 blank_issues_enabled: false
 contact_links:
   - name: Security vulnerability (do not open a public issue)
-    url: mailto:security@rein-ai.com
+    url: mailto:security@reinai.io
     about: Report security issues privately. See SECURITY.md for our disclosure policy.
   - name: Commercial license / Pro tier inquiry
-    url: mailto:licensing@rein-ai.com
+    url: mailto:licensing@reinai.io
     about: For proprietary/SaaS use, enterprise features, or perpetual licensing.
   - name: Code of conduct report
-    url: mailto:conduct@rein-ai.com
+    url: mailto:conduct@reinai.io
     about: Report behavior that violates our Code of Conduct.

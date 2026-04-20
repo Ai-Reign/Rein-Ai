@@ -80,7 +80,7 @@ This confidentiality obligation survives termination of this license for **five 
 
 ## How to buy
 
-Email **licensing@rein-ai.com** with:
+Email **licensing@reinai.io** with:
 1. Company name + website
 2. Approximate ARR + headcount band
 3. Brief description of how you intend to use Rein

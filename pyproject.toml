@@ -9,7 +9,7 @@ description = "Governance layer for autonomous agents: regime detection, circuit
 readme = "README.md"
 requires-python = ">=3.10"
 license = {text = "AGPL-3.0-or-later"}
-authors = [{name = "John N.W. Hampton Jr", email = "john@rein-ai.com"}]
+authors = [{name = "John N.W. Hampton Jr", email = "john@reinai.io"}]
 keywords = ["agent", "governance", "risk", "llm", "trading", "circuit-breaker", "audit"]
 classifiers = [
     "Development Status :: 3 - Alpha",
