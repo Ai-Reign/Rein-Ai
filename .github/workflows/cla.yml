@@ -22,14 +22,11 @@ jobs:
         uses: contributor-assistant/github-action@v2.6.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PERSONAL_ACCESS_TOKEN: ${{ secrets.CLA_SIGNATURES_TOKEN }}
         with:
           path-to-signatures: 'signatures/v1/cla.json'
           path-to-document: 'https://github.com/Ai-Reign/Rein-Ai/blob/main/CLA.md'
           branch: 'cla-signatures'
           allowlist: Ai-Rein,dependabot[bot]
-          remote-organization-name: Ai-Reign
-          remote-repository-name: cla-signatures
           custom-pr-sign-comment: 'I have read the CLA Document and I hereby sign the CLA'
           custom-allsigned-prcomment: 'All contributors have signed the CLA ✍️'
           lock-pullrequest-aftermerge: true
