@@ -293,9 +293,9 @@ Rein is AGPL-3.0 because strong copyleft is the right default for a governance l
 
 ### Get Pro
 
-- **Book a demo / request access:** [licensing@rein-ai.com](mailto:licensing@rein-ai.com) *(coming soon — until domain is live, use <firekicks@gmail.com>)*
+- **Book a demo / request access:** [licensing@rein-ai.com](mailto:licensing@rein-ai.com)
 - **Commercial license inquiries only:** [licensing@rein-ai.com](mailto:licensing@rein-ai.com)
-- **Security issues in the OSS:** [security@rein-ai.com](mailto:security@rein-ai.com) *(coming soon)*
+- **Security issues in the OSS:** [security@rein-ai.com](mailto:security@rein-ai.com)
 
 Pro access and extended attack-library materials are distributed through a private repository under signed NDA. The OSS repo is and always will be public.
 
@@ -306,11 +306,11 @@ Pro access and extended attack-library materials are distributed through a priva
 **Dual-licensed:**
 
 - **AGPL-3.0** (default — see [`LICENSE`](LICENSE)). Free for OSS, research, and self-hosted use. If you run Rein as part of a network service, your service must also be released under AGPL-3.0.
-- **Commercial License** (see [`COMMERCIAL-LICENSE.md`](COMMERCIAL-LICENSE.md)) for proprietary / SaaS use without copyleft obligations. Contact **firekicks@gmail.com** for a quote.
+- **Commercial License** (see [`COMMERCIAL-LICENSE.md`](COMMERCIAL-LICENSE.md)) for proprietary / SaaS use without copyleft obligations. Contact **licensing@rein-ai.com** for a quote.
 
 Contributors: see [`CLA.md`](CLA.md).
 
 ---
 
-Created and maintained by **John N.W. Hampton Jr** (<firekicks@gmail.com>).
+Created and maintained by **John N.W. Hampton Jr** (<john@rein-ai.com>).
 Copyright © 2026 John N.W. Hampton Jr.

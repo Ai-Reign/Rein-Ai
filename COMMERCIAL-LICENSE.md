@@ -60,7 +60,7 @@ Enterprise and OEM tiers include:
 
 ## How to buy
 
-Email **firekicks@gmail.com** with:
+Email **licensing@rein-ai.com** with:
 1. Company name + website
 2. Approximate ARR + headcount band
 3. Brief description of how you intend to use Rein

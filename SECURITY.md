@@ -6,7 +6,7 @@ Rein is a security/governance library. Vulnerabilities in Rein can put every dow
 
 **Do not open a public GitHub issue.**
 
-Email **firekicks@gmail.com** with:
+Email **security@rein-ai.com** with:
 
 - A description of the vulnerability
 - Steps to reproduce
