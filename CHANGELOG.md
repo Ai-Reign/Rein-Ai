@@ -4,7 +4,7 @@ All notable changes to Rein are documented here. Format follows [Keep a Changelo
 
 ## [Unreleased]
 
-## [1.0.0] — 2026-04-28
+## [1.0.0] — 2026-04-29
 
 First public release. Project renamed from Tripwire to **Rein-AI** after trademark conflict research; no API-compatibility with the pre-rename internal 0.1.0 versions.
 

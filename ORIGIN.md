@@ -24,7 +24,7 @@ I'm releasing it AGPL-3.0 because this layer should be something everyone can au
 
 If you're building an autonomous agent and you've had that feeling of "I have no idea what this thing is actually going to do when I turn it on" — that's the feeling Rein-AI was built to answer.
 
-Launching April 28, 2026.
+Launching April 29, 2026.
 
 — **John N.W. Hampton Jr**
 Former merchant mariner. Self-taught. Shipping.
