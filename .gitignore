@@ -50,3 +50,5 @@ secrets.json
 notes/
 *.private.md
 LAUNCH.md
+LAUNCH_RUNBOOK.md
+launch-metrics-*/
