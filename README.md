@@ -11,6 +11,8 @@ Rein gates every action your agent takes — LLM tool call, trade, email, API re
 
 Originally extracted from a production Kalshi trading bot where it prevented 12 runaway trades in its first week. Framework-agnostic: works for trading bots, LLM agents, scrapers, RPA, or any system taking actions you don't want spiraling.
 
+> **How this library came to exist:** [The origin story](ORIGIN.md) — a ten-year merchant mariner teaching himself Python, a BTC trading bot that didn't make money, and the governance layer that turned out to be the real product.
+
 ---
 
 ## The problem
