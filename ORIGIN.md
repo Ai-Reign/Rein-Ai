@@ -2,6 +2,8 @@
 
 I'm not a traditional founder. I spent ten years at sea as a merchant mariner before I wrote a line of code.
 
+Along the way, I built **The FreeGame Podcast** to 13K+ followers and 2M+ views across platforms — audience-building was the unexpected second skill that came out of going independent.
+
 In 2024 I started teaching myself Python. By early 2025 I was building **Predbot** — an autonomous agent that would trade BTC prediction markets on Kalshi. Let Claude read signals. Score confidence. Execute through the Kalshi API with RSA-signed auth. A WebSocket dashboard to watch it run.
 
 It worked. Technically.
