@@ -30,7 +30,7 @@ You should see **130 passing tests**.
 
 ## Adding a red-team attack
 
-The high-leverage contribution path. Each attack is a subclass in `src/rein_ai/adversary.py`:
+The most useful contribution path. Each attack is a subclass in `src/rein_ai/adversary.py`:
 
 1. Implement your attack as an `async` callable that takes a `Rein` brain and returns a `ScenarioResult`.
 2. Register it in the `ATTACKS` registry.
