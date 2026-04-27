@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "rein-ai"
-version = "0.1.0"
+version = "1.0.0"
 description = "Governance layer for autonomous agents: regime detection, circuit breakers, strategy scoring, audit trail"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -12,7 +12,7 @@ license = {text = "AGPL-3.0-or-later"}
 authors = [{name = "John N.W. Hampton Jr", email = "john@reinai.io"}]
 keywords = ["agent", "governance", "risk", "llm", "trading", "circuit-breaker", "audit"]
 classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 5 - Production/Stable",
     "License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.10",
