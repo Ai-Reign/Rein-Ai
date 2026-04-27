@@ -1,23 +1,23 @@
 # Rein
 
-**Rein in your agents — before they run.**
+**Rein in your agents before they run.**
 
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
 [![License: AGPL v3](https://img.shields.io/badge/license-AGPL--3.0-green.svg)](LICENSE)
 [![Tests: 135 passing](https://img.shields.io/badge/tests-135%20passing-brightgreen.svg)](#status)
 [![PyPI: rein-ai](https://img.shields.io/badge/pypi-rein--ai-orange.svg)](https://pypi.org/project/rein-ai/)
 
-Rein gates every action your agent takes — LLM tool call, trade, email, API request — and halts the system when behavior degrades. Regime-aware Bayesian kill switch, natural-language policies, and a built-in adversarial simulator, all in one drop-in `gate()` call.
+Rein gates every action your agent takes (LLM tool call, trade, email, API request) and halts the system when behavior degrades. Regime-aware Bayesian kill switch, natural-language policies, and a built-in adversarial simulator, all in one drop-in `gate()` call.
 
 Originally extracted from a production Kalshi trading bot where it prevented 12 runaway trades in its first week. Framework-agnostic: works for trading bots, LLM agents, scrapers, RPA, or any system taking actions you don't want spiraling.
 
-> **How this library came to exist:** [The origin story](ORIGIN.md) — a ten-year merchant mariner teaching himself Python, a BTC trading bot that didn't make money, and the governance layer that turned out to be the real product.
+> **How this library came to exist:** [The origin story](ORIGIN.md). A ten-year merchant mariner teaching himself Python, a BTC trading bot that didn't make money, and the governance layer that turned out to be the real product.
 
 ---
 
 ## The problem
 
-Existing AI safety tooling validates **content** — guardrail libraries check whether an LLM's input or output contains PII, profanity, or prompt-injection strings. That's necessary but insufficient. Once an agent is actually *taking actions* — placing trades, sending emails, calling paid APIs, posting to production — content validation is too late. You need a **runtime governor** that can cut off a misbehaving agent mid-flight based on observed outcomes, not just text.
+Existing AI safety tooling validates **content**. Guardrail libraries check whether an LLM's input or output contains PII, profanity, or prompt-injection strings. That's necessary but insufficient. Once an agent is actually *taking actions* (placing trades, sending emails, calling paid APIs, posting to production), content validation is too late. You need a **runtime governor** that can cut off a misbehaving agent mid-flight based on observed outcomes, not just text.
 
 Rein is that governor.
 
@@ -28,7 +28,7 @@ Rein is that governor.
 A Python library that sits inline with any autonomous system and gates every action. It:
 
 1. **Classifies the current regime** (normal / stressed / shock) from live signal inputs.
-2. **Scores each action source × action type** with Bayesian decay — stale performance gets discounted, recent performance compounds.
+2. **Scores each action source × action type** with Bayesian decay. Stale performance gets discounted, recent performance compounds.
 3. **Halts the system** when drawdown, error rate, stale-state, rate-limit storms, or anomaly detection trip a threshold.
 4. **Writes a tamper-evident audit log** (JSONL + cryptographic chain) of every decision for compliance and postmortem.
 
@@ -253,7 +253,7 @@ Rein and content-guardrail libraries are complementary: use Guardrails/NeMo to v
 
 **The open-source library is the foundation. Rein-AI Pro is the production layer built on top of it.**
 
-Pro is for teams running real money, real users, or real compliance surface area through their agents — where a missed runaway costs more than a subscription.
+Pro is for teams running real money, real users, or real compliance surface area through their agents, where a missed runaway costs more than a subscription.
 
 ### What you get
 
@@ -282,9 +282,9 @@ Pro is for teams running real money, real users, or real compliance surface area
 
 ### Why the split exists
 
-Rein is AGPL-3.0 because strong copyleft is the right default for a governance library — it forces downstream systems that depend on it to stay inspectable. Pro exists because some capabilities are only valuable *because* they're not public: an attack library everyone can read is an attack library nobody can use, and detection thresholds calibrated from real deployments lose their edge the moment they're published.
+Rein is AGPL-3.0 because strong copyleft is the right default for a governance library. It forces downstream systems that depend on it to stay inspectable. Pro exists because some capabilities are only valuable *because* they're not public: an attack library everyone can read is an attack library nobody can use, and detection thresholds calibrated from real deployments lose their edge the moment they're published.
 
-**The OSS version is production-ready on its own.** Pro is for teams that want the time-savings, the calibrated defaults, and the commercial license — not for teams that can't ship without it.
+**The OSS version is production-ready on its own.** Pro is for teams that want the time-savings, the calibrated defaults, and the commercial license, not for teams that can't ship without it.
 
 ### Pricing
 

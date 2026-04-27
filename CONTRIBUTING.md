@@ -1,6 +1,6 @@
 # Contributing to Rein
 
-Thanks for your interest. Rein is a governance library — correctness and auditability matter. Contributions that improve safety, expand integrations, or strengthen the red-team library are especially welcome.
+Thanks for your interest. Rein is a governance library. Correctness and auditability matter. Contributions that improve safety, expand integrations, or strengthen the red-team library are especially welcome.
 
 ## Before you start
 
