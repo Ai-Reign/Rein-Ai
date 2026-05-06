@@ -1,17 +1,26 @@
 # Rein
 
-**Rein in your agents before they run.**
+**Runtime kill-switch for autonomous AI agents.** Rein gates every action your agent takes, scores it against live performance, and halts the system before things spiral.
 
-[![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
-[![License: AGPL v3](https://img.shields.io/badge/license-AGPL--3.0-green.svg)](LICENSE)
-[![Tests: 135 passing](https://img.shields.io/badge/tests-135%20passing-brightgreen.svg)](#status)
-[![PyPI: rein-ai](https://img.shields.io/badge/pypi-rein--ai-orange.svg)](https://pypi.org/project/rein-ai/)
+```bash
+pip install rein-ai
+```
 
-Rein gates every action your agent takes (LLM tool call, trade, email, API request) and halts the system when behavior degrades. Regime-aware Bayesian kill switch, natural-language policies, and a built-in adversarial simulator, all in one drop-in `gate()` call.
+```python
+from rein_ai import Rein, ReinConfig
+brain = Rein(cfg=ReinConfig.from_env()); await brain.start()
 
-Originally extracted from a production Kalshi trading bot where it prevented 12 runaway trades in its first week. Framework-agnostic: works for trading bots, LLM agents, scrapers, RPA, or any system taking actions you don't want spiraling.
+@brain.governed(source="llm_agent")
+async def send_email(to, body): ...
+```
 
-> **How this library came to exist:** [The origin story](ORIGIN.md). A ten-year merchant mariner teaching himself Python, a BTC trading bot that didn't make money, and the governance layer that turned out to be the real product.
+One decorator. Framework-agnostic — works with LangChain, LlamaIndex, OpenAI Agents SDK, or your own loop.
+
+**Use it when:** your agent could burn $200 in API calls in four minutes, send 80 emails to the wrong list, or keep trading after the data feed died — and content guardrails won't catch any of it because the outputs were "valid." Rein watches *outcomes*, not text.
+
+Originally extracted from a production Kalshi trading bot where it caught 12 runaway trades in week one. [Origin story.](ORIGIN.md)
+
+[![PyPI](https://img.shields.io/badge/pypi-rein--ai-orange.svg)](https://pypi.org/project/rein-ai/) [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/) [![AGPL-3.0](https://img.shields.io/badge/license-AGPL--3.0-green.svg)](LICENSE) [![135 tests](https://img.shields.io/badge/tests-135%20passing-brightgreen.svg)](#status)
 
 ---
 
@@ -79,6 +88,8 @@ Or use the decorator for one-line adoption:
 @brain.governed(source="llm_agent")
 async def send_email(to, body): ...
 ```
+
+> ⭐ **If this is the thing you've been writing yourself, a star helps the next person find it.**
 
 ---
 
