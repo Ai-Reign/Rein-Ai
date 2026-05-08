@@ -2,7 +2,32 @@
 
 All notable changes to Rein are documented here. Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## [Unreleased] — targeting 1.1.0 on 2026-05-13
+
+**Polish release. No new features.**
+
+Week 1 (4/30 → 5/7) produced 122 PyPI installs, 68 unique repo viewers, and zero filed issues, PRs, or feature requests. With no clustered feature signal, v1.1 tightens what shipped instead of inventing demand.
+
+### Changed
+- **README:** "Rein vs alternatives" comparison table moved above the quickstart so visitors can compare before reading code.
+- **README:** Pro section collapsed from ~50 lines to a one-sentence summary; full Pro details (capabilities, who it's for, pricing, contacts) extracted to `PRO.md`.
+- **README:** lede rewritten — value prop and decorator above the fold (`4eea9ed`).
+
+### Added
+- `PRO.md` — standalone Pro details document.
+
+### Planned (not yet merged)
+- `docs/shadow-protocol.md` rewrite as a 4-step runbook (enable shadow → 24h observation → tune thresholds → flip enforcement).
+- `examples/llm_agent_governor/` verified against current Anthropic SDK on a fresh venv with pinned `requirements.txt`.
+- Test suite validated on Python 3.10 / 3.11 / 3.12 / 3.13 (currently only validated on 3.14).
+
+### Explicitly out of scope
+- No new red-team attack classes. The "what should attack #6 be?" question is the community hook — adding one ourselves pre-empts that conversation.
+- No new framework adapters. LangChain, Anthropic, FastAPI router exist; LlamaIndex / AutoGen / Temporal wait until someone files an issue.
+- No NL policy compiler expansion until rule types get stress-tested.
+- No new CLI commands.
+
+---
 
 ## [1.0.0] — 2026-04-30
 
