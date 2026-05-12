@@ -15,11 +15,11 @@ Week 1 (4/30 → 5/7) produced 122 PyPI installs, 68 unique repo viewers, and ze
 
 ### Added
 - `PRO.md` — standalone Pro details document.
+- `examples/llm_agent_governor/requirements.txt` — pinned dependency floor (`anthropic>=0.40`), verified end-to-end against `anthropic` 0.101.0 on Python 3.14.
+- Python 3.14 added to the CI test matrix (`pyproject.toml` classifier + `.github/workflows/ci.yml`). Full suite now green on 3.10 / 3.11 / 3.12 / 3.13 / 3.14.
 
-### Planned (not yet merged)
-- `docs/shadow-protocol.md` rewrite as a 4-step runbook (enable shadow → 24h observation → tune thresholds → flip enforcement).
-- `examples/llm_agent_governor/` verified against current Anthropic SDK on a fresh venv with pinned `requirements.txt`.
-- Test suite validated on Python 3.10 / 3.11 / 3.12 / 3.13 (currently only validated on 3.14).
+### Changed (docs)
+- `docs/shadow-protocol.md` rewritten as a 4-step runbook (enable shadow → 24h observation → tune thresholds → flip enforcement). Dropped a stale reference to a `force_enforcement(source=...)` method that does not exist in the codebase. Added a symptom-to-env-var tuning table for step 3.
 
 ### Explicitly out of scope
 - No new red-team attack classes. The "what should attack #6 be?" question is the community hook — adding one ourselves pre-empts that conversation.
