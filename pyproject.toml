@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "rein-ai"
-version = "1.0.0"
+version = "1.1.0"
 description = "Governance layer for autonomous agents: regime detection, circuit breakers, strategy scoring, audit trail"
 readme = "README.md"
 requires-python = ">=3.10"

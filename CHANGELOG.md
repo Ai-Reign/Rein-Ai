@@ -2,7 +2,7 @@
 
 All notable changes to Rein are documented here. Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow [Semantic Versioning](https://semver.org/).
 
-## [Unreleased] — targeting 1.1.0 on 2026-05-13
+## [1.1.0] — 2026-05-13
 
 **Polish release. No new features.**
 
