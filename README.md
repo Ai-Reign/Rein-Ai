@@ -22,6 +22,8 @@ Originally extracted from a production Kalshi trading bot where it caught 12 run
 
 [![PyPI](https://img.shields.io/badge/pypi-rein--ai-orange.svg)](https://pypi.org/project/rein-ai/) [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/) [![AGPL-3.0](https://img.shields.io/badge/license-AGPL--3.0-green.svg)](LICENSE) [![135 tests](https://img.shields.io/badge/tests-135%20passing-brightgreen.svg)](#status)
 
+> **Building something commercial?** AGPL waiver + production-calibrated detectors, extended attack library, and managed cloud are in [Rein-AI Pro](PRO.md). Contact: [licensing@reinai.io](mailto:licensing@reinai.io).
+
 ---
 
 ## The problem
